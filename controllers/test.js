@@ -4,7 +4,7 @@ module.exports = {
         return test
     },
     test2 : async ()=> {
-        const test = 'prueba ok'
+        const test = 'prueba ok 2'
         return test
     },
     test3 : async ()=> {
