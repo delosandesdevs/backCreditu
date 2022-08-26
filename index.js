@@ -14,4 +14,7 @@ app.listen(port, () => {
 })
 
 
-app.use('/', test)
+app.get('/prueba', async (req, res)=>{
+    res.send('hola')
+})
+// app.use('/', test)
