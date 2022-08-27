@@ -1,14 +1,11 @@
 module.exports = {
     test : async ()=> {
-        const test = 'test ok'
-        return test
+        return 'test1 ok'
     },
     test2 : async ()=> {
-        const test = 'prueba ok 2'
-        return test
+        return 'test2 ok'
     },
     test3 : async ()=> {
-        const test = 'Hola soy yo'
-        return test
+        return 'test3 ok'
     }
 }
