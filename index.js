@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require("cors")
-const { sequelize } = require('./db/db')
+// const { sequelize } = require('./db/db')
 const app = express()
 const test = require('./routes/test')
 app.use(express.json());
@@ -16,7 +16,7 @@ app.use('/', test)
 
 app.listen(port, () => {
     console.log('Server run on Port =>  ' + port)
-    sequelize.sync({ alter: true })
+    // sequelize.sync({ alter: true })
 })
 
 
