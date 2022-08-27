@@ -16,7 +16,7 @@ app.use('/', test)
 
 app.listen(port, () => {
     console.log('Server run on Port =>  ' + port)
-    sequelize.sync({ force: true })
+    sequelize.sync({ alter: true })
 })
 
 
