@@ -8,10 +8,29 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 let port = 8080
 
-app.get('/prueba', async (req, res)=>{
-    res.send('hola')
-})
+app.get('/', async (req, res)=>{res.send('entry OK')})
 app.use('/', test)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 app.listen(port, () => {

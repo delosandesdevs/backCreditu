@@ -1,5 +1,5 @@
 const { Sequelize, DataTypes, Op } = require('sequelize');
-// const sequelize = new Sequelize(`postgres://postgres:R4m1r0.8489@localhost:5432/fyh`, {
+// const sequelize = new Sequelize(`postgres://postgres:password@localhost:5432/dbname`, {
 //   logging: false, // set to console.log to see the raw SQL queries
 //   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
 // });
@@ -13,7 +13,7 @@ const sequelize = new Sequelize({
     logging: false,
     dialectOptions: {
       ssl: {
-        require: true, // This will help you. But you will see nwe error
+        require: true, // This will help you. But you will see new error
         rejectUnauthorized: false // This line will fix new error
       },
       logging: false,
