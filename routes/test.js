@@ -14,9 +14,10 @@ router.get('/test', async (req, res) => {
     }
 })
 
-router.get('/test2', async (req, res) =>{
+router.post('/test2', async (req, res) =>{
+    let {test} = req.body
     try {
-        res.status(200).send(await test2())  
+        res.status(200).json(await test2(test))  
     } catch (error) {
         re.status(401).send({
             name : error.message,

@@ -1,9 +1,14 @@
+const Test = require('./../models/Test')
+
 module.exports = {
     test : async ()=> {
-        return 'test1 desde pre-pro'
+        const prueba = await Test.findAll()
+        return prueba
     },
-    test2 : async ()=> {
-        return 'test2 ok desde pre-pro'
+    test2 : async (data)=> {
+        const prueba1 = await Test.create({test : data})
+        
+        return prueba1
     },
     test3 : async ()=> {
         return 'test3 ok desde pre-pro'
