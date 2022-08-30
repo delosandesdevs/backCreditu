@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const router = Router();
-const {test, test2} = require('../controllers/test')
+const {test, test2} = require('../controllers/controllerTest')
 
 router.get('/test', async (req, res) => {
     try {
