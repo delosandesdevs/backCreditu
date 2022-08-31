@@ -3,6 +3,10 @@ const cors = require("cors")
 const { sequelize } = require('./db/db')
 const app = express()
 const test = require('./routes/test')
+const dotenv = require('dotenv')
+
+dotenv.config()
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())

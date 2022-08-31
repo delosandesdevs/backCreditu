@@ -1,14 +1,18 @@
 const { Sequelize, DataTypes, Op } = require('sequelize');
+
+const {
+  DB_USER, DB_PASSWORD, DB_HOST, DATABASE, PORT
+} = process.env;
 // const sequelize = new Sequelize(`postgres://postgres:R4m1r0.8489@localhost:5432/fyh`, {
 //   logging: false, // set to console.log to see the raw SQL queries
 //   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
 // });
 const sequelize = new Sequelize({
-    database: "ramitest",
-    username: "postgres",
-    password: "R4m1r0.8489",
-    host: "rami.cwdlvpyp14jf.sa-east-1.rds.amazonaws.com",
-    port: 5432,
+    database: DATABASE,
+    username: DB_USER,
+    password: DB_PASSWORD,
+    host: DB_HOST,
+    port: PORT,
     dialect: "postgres",
     logging: false,
     dialectOptions: {
