@@ -1,13 +1,18 @@
 const {app} = require('../app')
 const request = require('supertest');
 
-
+const randomScore = Math.floor(Math.random() * Math.floor(10001)) 
+  
+const newPlayer = {
+    nickname: "florGesell",
+    avatar: "https://drive.google.com/file/d/1V5Duu01gsI0sDWPn4gP4ezY2YtP_Pd7e/view",
+    score: randomScore
+}
 
 describe('CRUD Players', ()=>{
 
     describe('GET /players', ()=>{
         test('should return a 200 status code', async ()=>{
-            console.log('test get')
             const response = await request(app).get('/players').send() //ojo cambiar la ruta en el get
             expect(response.statusCode).toBe(200)
         });
@@ -16,17 +21,45 @@ describe('CRUD Players', ()=>{
             const response = await request(app).get('/players').send()
             expect(response.body).toBeInstanceOf(Array)
          });
+
+         test('should be with an array of objects', async ()=>{
+            await request(app).post('/players').send(newPlayer)
+            const response = await request(app).get('/players').send()
+            expect(response.body[0]).toBeInstanceOf(Object)
+         });
+
     })
+
+    describe('GET /players/:id', () => {
+     
+        test('should respond with a 200 status code', async () => {
+            const player = await request(app).post('/players').send(newPlayer)
+            const response = await request(app).get(`/players/${player.body.id}`).send() 
+            expect(response.statusCode).toBe(200) 
+        })
+        
+        test('should find a player by ID', async () => {
+            const player = await request(app).post('/players').send(newPlayer)
+            const response = await request(app).get(`/players/${player.body.id}`).send() 
+            expect(response.body).toBeInstanceOf(Object) 
+              expect(response.body).toEqual(     
+                  expect.objectContaining(newPlayer)
+               )
+         })
+
+         test('ID must be a number', async () => {
+            const response = await request(app).get(`/players/string`).send() 
+            expect(response.statusCode).toBe(400) 
+         })
+
+         test('should return a status 400 if the player does not exist', async () => {
+            const response = await request(app).get(`/players/5000`).send() 
+            expect(response.statusCode).toBe(400) 
+         })
+     })
 
     describe('POST /players', () => {
 
-        const randomScore = Math.floor(Math.random() * Math.floor(10001)) 
-  
-        const newPlayer = {
-           nickname: "florGesell",
-           avatar: "https://drive.google.com/file/d/1V5Duu01gsI0sDWPn4gP4ezY2YtP_Pd7e/view",
-           score: randomScore
-        }
 
         test('should return a status code 200', async ()=>{
             const response = await request(app).post('/players').send() // ojo cambiar la ruta en el post
@@ -62,8 +95,8 @@ describe('CRUD Players', ()=>{
         // should have path /players
         test('must have path /players', async () => {
             const response = await request(app).post('/players').send() 
-            console.log(response.text);
-            console.log(response.req.socket.event);   
+            // console.log(response.text);
+            // console.log(response.req.socket.event);   
         })
     })
 
