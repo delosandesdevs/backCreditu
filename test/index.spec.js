@@ -1,5 +1,5 @@
-const {app} = require('../app')
-const request = require('supertest');
+// const {app} = require('../app')
+// const request = require('supertest');
 
 const randomScore = Math.floor(Math.random() * Math.floor(10001)) 
   
@@ -9,7 +9,8 @@ const newPlayer = {
     score: randomScore
 }
 
-describe('CRUD Players', ()=>{
+// describe('CRUD Players', ()=>{
+
 
     describe('GET /players', ()=>{
         test('should return a 200 status code', async ()=>{
@@ -61,36 +62,37 @@ describe('CRUD Players', ()=>{
     describe('POST /players', () => {
 
 
-        test('should return a status code 200', async ()=>{
-            const response = await request(app).post('/players').send() // ojo cambiar la ruta en el post
-            expect(response.statusCode).toBe(200)
-        });
-        
-        test('hould have a content-type - application/json', async ()=>{
-            const response = await request(app).post('/players').send() // ojo cambiar la ruta en el post
-            expect(response.headers['content-type']).toEqual(expect.stringContaining('application/json'));
-        });
 
-        test('hould have an ID in the model', async ()=>{
-            const response = await request(app).post('/players').send(newPlayer) // CUANDO LE PASO UN OBJETO SI LO CREA
+//         test('should return a status code 200', async ()=>{
+//             const response = await request(app).post('/players').send() // ojo cambiar la ruta en el post
+//             expect(response.statusCode).toBe(200)
+//         });
+        
+//         test('hould have a content-type - application/json', async ()=>{
+//             const response = await request(app).post('/players').send() // ojo cambiar la ruta en el post
+//             expect(response.headers['content-type']).toEqual(expect.stringContaining('application/json'));
+//         });
+
+//         test('hould have an ID in the model', async ()=>{
+//             const response = await request(app).post('/players').send(newPlayer) // CUANDO LE PASO UN OBJETO SI LO CREA
             
-            expect(response.body.id).toBeDefined();
-        });
+//             expect(response.body.id).toBeDefined();
+//         });
 
-        test('hould have a NAME in the model', async ()=>{
-            const response = await request(app).post('/players').send() // ojo cambiar la ruta en el post
-            expect(response.body.nickname).toBeDefined();
-        });
+//         test('hould have a NAME in the model', async ()=>{
+//             const response = await request(app).post('/players').send() // ojo cambiar la ruta en el post
+//             expect(response.body.nickname).toBeDefined();
+//         });
 
-        test('ID must be an integer', async ()=>{
-            const response = await request(app).post('/players').send() // ojo cambiar la ruta en el post
-            expect(typeof response.body.id).toBe('number');
-        });
+//         test('ID must be an integer', async ()=>{
+//             const response = await request(app).post('/players').send() // ojo cambiar la ruta en el post
+//             expect(typeof response.body.id).toBe('number');
+//         });
         
-        test('NAME must be a string', async ()=>{
-            const response = await request(app).post('/players').send({test : 'players name'}) // ojo cambiar la ruta en el post
-            expect(typeof response.body.nickname).toBe('string');
-        });
+//         test('NAME must be a string', async ()=>{
+//             const response = await request(app).post('/players').send({test : 'players name'}) // ojo cambiar la ruta en el post
+//             expect(typeof response.body.nickname).toBe('string');
+//         });
     
         // should have path /players
         test('must have path /players', async () => {
@@ -100,12 +102,13 @@ describe('CRUD Players', ()=>{
         })
     })
 
+
     
     
-    // PUT /players, should modify the name
-    // PUT /players, should modify the avatar
-    // PUT /players, should modify the score
+//     // PUT /players, should modify the name
+//     // PUT /players, should modify the avatar
+//     // PUT /players, should modify the score
 
-    // DELETE /players, should delete a player
+//     // DELETE /players, should delete a player
 
-})
+// })
