@@ -32,5 +32,12 @@ const deletePlayer = async (id)=> {
     
 }
 
-module.exports = {getAllPlayers, createPlayer, deletePlayer}
+
+const getPlayerById = async (id) => {
+    console.log(typeof id)
+    const player = await Player.findByPk(id)
+    return player
+}
+
+module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById}
     
