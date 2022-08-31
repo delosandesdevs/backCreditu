@@ -4,11 +4,11 @@ const { Sequelize, DataTypes, Op } = require('sequelize');
 //   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
 // });
 const sequelize = new Sequelize({
-    database: process.env.DB_NAME,
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    host: process.env.HOST,
-    port: process.env.PORT,
+    database: 'ramitest',
+    username: 'postgres',
+    password: 'R4m1r0.8489',
+    host: 'rami.cwdlvpyp14jf.sa-east-1.rds.amazonaws.com',
+    port: 5432,
     dialect: "postgres",
     logging: false,
     dialectOptions: {
