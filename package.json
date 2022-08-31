@@ -6,7 +6,6 @@
   "scripts": {
     "test": "jest --detectOpenHandles --verbose --silent",
     "start": "node index.js",
-    "dev": "nodemon L"
   },
   "author": "deLosAndes",
   "license": "MIT-0",
