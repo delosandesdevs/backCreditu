@@ -4,7 +4,6 @@
   "description": "App",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --verbose --silent",
     "start": "node index.js",
   },
   "author": "deLosAndes",
