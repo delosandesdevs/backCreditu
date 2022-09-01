@@ -1,5 +1,10 @@
 const Player = require('../models/Player')
+const players = require('../playersDb.json')
 
+
+const chargePlayers = async () => {
+        players.forEach(p => createPlayer(p.nickname, p.avatar, p.score) )
+}
 
 const getAllPlayers = async ()=> {
     const allPlayers = await Player.findAll(
@@ -35,5 +40,5 @@ const modifyPlayer = async (id, nickname, avatar) => {
     return "Player can't be updated successfully"
 }
 
-module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer}
+module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers}
     
