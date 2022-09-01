@@ -1,6 +1,16 @@
 const { Router } = require('express')
 const router = Router();
-const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer} = require('../controllers/functionPlayers')
+const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers} = require('../controllers/functionPlayers')
+
+
+router.get('/chargeDb', async (req, res) => {
+    try {
+       await chargePlayers()
+        res.send('se cargaron correctamente')
+    } catch (error) {
+        res.status(401).json(error.message)
+    }
+})
 
 router.get('/players', async (req, res) => {
     try {
