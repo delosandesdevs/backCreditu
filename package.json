@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest --detectOpenHandles --silent"
+    "test": "jest --detectOpenHandles --silent --verbose",
+    "dev" : "nodemon L"
+    
   },
   "author": "deLosAndes",
   "license": "MIT-0",

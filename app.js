@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require("cors")
 const player = require('./routes/player')
+const user = require('./routes/user')
 
 const app = express()
 
@@ -11,6 +12,7 @@ app.use(cors())
 
 
 app.use('/', player)
+app.use('/', user)
 
 
 module.exports = {app}
