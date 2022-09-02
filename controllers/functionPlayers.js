@@ -28,13 +28,13 @@ const createPlayer = async (nickname, avatar, score)=> {
 }
 
 const deletePlayer = async (id)=> {
-    await Player.destroy({where: {id: id}})
-    return 'Player deleted successfully'
+   const deletedPlayer = await Player.destroy({where: {id: id}})
+    return deletedPlayer
 }
 
-const modifyPlayer = async (id, nickname, avatar) => {
+const modifyPlayer = async (id, nickname, avatar, score) => {
     
-    const update = await Player.update({nickname: nickname, avatar: avatar}, { where: { id: id}})
+    const update = await Player.update({nickname: nickname, avatar: avatar, score: score}, { where: { id: id}})
     
     if(update === 1) return 'Player updated successfully'
     return "Player can't be updated successfully"
