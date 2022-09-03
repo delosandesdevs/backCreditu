@@ -2,20 +2,13 @@ const {sequelize, DataTypes, Op } = require ('../db/db.js')
 
 
 const Player = sequelize.define('player', {
-    id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-        allowNull: false,
-        unique: true
-    },
     nickname : {
         type : DataTypes.STRING,
-        allowNul : false
+        allowNull : false
     },
     score: {
         type : DataTypes.INTEGER,
-        allowNul : false
+        allowNull : false
     },
     status: {
         type : DataTypes.STRING,
