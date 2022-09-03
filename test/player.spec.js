@@ -31,7 +31,7 @@ beforeEach(async() => {
 })
 
 
-describe('CRUD Players', ()=>{
+xdescribe('CRUD Players', ()=>{
 
     describe('Model Player', ()=>{
         test('Must have a prop nickname, avatar, score, status, galeria', async() => {
@@ -240,9 +240,9 @@ describe('CRUD Players', ()=>{
 
 })
 
-
 afterAll(() => {
     sequelize.close()
     server.close()
 })
+
 

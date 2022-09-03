@@ -1,2 +1,5 @@
-//test.hasMany(test1)
-//test1.belongsTo(test)
+const User = require('./User')
+const Player = require('./Player')
+
+User.hasOne(Player)
+Player.belongsTo(User)
