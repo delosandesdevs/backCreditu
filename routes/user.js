@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const router = Router();
-const {getUser, createUser, modifyUser, deleteUser} = require('../controllers/functionUsers')
+const {getUser, createAuth0, modifyUser, deleteUser} = require('../controllers/functionUsers')
 
 router.get('/user/:order', async (req, res) => {
     const {order} = req.params
@@ -15,9 +15,9 @@ router.get('/user/:order', async (req, res) => {
 })
 
 router.post('/user', async (req, res) => {
-    const {name, email, hasPlayer, role} = req.body
+    const {name, email} = req.body
     try {
-        res.status(200).send(await createUser(name, email, hasPlayer, role))      
+        res.status(200).send(await createAuth0(name, email))      
         } catch (error) {
             res.status(401).send({
                 name : error.name,
