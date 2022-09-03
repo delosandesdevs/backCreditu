@@ -13,8 +13,10 @@ router.get('/chargeDb', async (req, res) => {
 })
 
 router.get('/players', async (req, res) => {
+    let { page = 0, size = 15, orderby} = req.query
     try {
-    res.status(200).json(await getAllPlayers())      
+    orderby = orderby !== 'asc' && orderby !== 'desc' ? 'desc' : orderby
+    res.status(200).json(await getAllPlayers(page, size, orderby))      
     } catch (error) {
         res.status(401).send({
             name : error.name,

@@ -6,15 +6,17 @@ const chargePlayers = async () => {
         players.forEach(p => createPlayer(p.nickname, p.avatar, p.score) )
 }
 
-const getAllPlayers = async ()=> {
-    const allPlayers = await Player.findAll(
-        {
-        order: [
-            ['score', 'DESC']
-        ]
-    }
-    )
-    return allPlayers
+const getAllPlayers = async (page, size, orderby)=> {  // agregar orderBy
+  
+    
+    const { count, rows } = await Player.findAndCountAll({
+        limit: Number(size),
+        offset: Number(page) * Number(size), 
+        order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']]
+    })
+     return rows
+    
+    
 }
 
 const getPlayerById = async (id) => {

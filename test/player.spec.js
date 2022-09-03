@@ -37,6 +37,7 @@ describe('CRUD Players', ()=>{
         test('Must have a prop nickname, avatar, score, status, galeria', async() => {
             const response = await Player.create({nickname: "florGesell", avatar: "image.png", score: 56})
             const newPlayer = response.dataValues
+            expect(newPlayer.id).toBe(3001)
             expect(newPlayer.nickname).toBeDefined()
             expect(newPlayer.avatar).toBeDefined()
             expect(newPlayer.score).toBeDefined()
@@ -67,9 +68,42 @@ describe('CRUD Players', ()=>{
         const nicknames = response.body.map(p => p.nickname)
         expect(nicknames).toContain('playerOne')
      })
+
+     test('if orderby=asc should return a limit of players for page, in order ASC by score', async () => {
+            await Player.create({nickname: "florGesell", avatar: "image.png", score: 56})
+            await Player.create({nickname: "ramiRama", avatar: "image.png", score: 500})
+            await Player.create({nickname: "gianCat", avatar: "image.png", score: 421})
+            await Player.create({nickname: "juaniJuano", avatar: "image.png", score: 325})
+            await Player.create({nickname: "rodriRo", avatar: "image.png", score: 21})
+         const response = await api.get('/players?page=0&size=2&orderby=asc')
+         expect(response.body[0].nickname).toBe('rodriRo')
+         expect(response.body[1].nickname).toBe('florGesell')
+     })
+
+     test('if orderBy=desc should return a limit of players for page, in order DESC by score', async () => {
+            await Player.create({nickname: "florGesell", avatar: "image.png", score: 56})
+            await Player.create({nickname: "ramiRama", avatar: "image.png", score: 500})
+            await Player.create({nickname: "gianCat", avatar: "image.png", score: 421})
+            await Player.create({nickname: "juaniJuano", avatar: "image.png", score: 325})
+            await Player.create({nickname: "rodriRo", avatar: "image.png", score: 21})
+         const response = await api.get('/players?page=0&size=2&orderby=desc')
+         expect(response.body[0].nickname).toBe('ramiRama')
+         expect(response.body[1].nickname).toBe('gianCat')
+      })
+
+      test('if orderby is not "asc" or "desc", must return a list of players order descending by score' , async () => {
+         await Player.create({nickname: "florGesell", avatar: "image.png", score: 56})
+         await Player.create({nickname: "ramiRama", avatar: "image.png", score: 500})
+         await Player.create({nickname: "gianCat", avatar: "image.png", score: 421})
+         await Player.create({nickname: "juaniJuano", avatar: "image.png", score: 325})
+         await Player.create({nickname: "rodriRo", avatar: "image.png", score: 21})
+      const response = await api.get('/players?page=0&size=2&orderby=other')
+      expect(response.body[0].nickname).toBe('ramiRama')
+      expect(response.body[1].nickname).toBe('gianCat')
+   })
   })
   
-  describe('GET /players/:id', () => {
+  describe('GET /players/:id', () => {  // por nickname y ID y status  // cambiar ids
   
      test('should respond with a 200 status code', async () => {
         await api.get('/players')
