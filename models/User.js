@@ -7,7 +7,8 @@ name : {
 },
 email : {
     type : DataTypes.STRING,
-    allowNull : false
+    allowNull : false,
+    unique : true
 },
 hasPLayer : {
     type : DataTypes.BOOLEAN,
@@ -25,5 +26,10 @@ role : {
     freezeTableName : true
 }
 )
+
+const {player, users} = sequelize.models
+
+users.hasOne(player)
+player.belongsTo(users)
 
 module.exports = User
