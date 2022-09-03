@@ -1,22 +1,18 @@
 const Player = require('../models/Player')
 const players = require('../playersDb.json')
-
+const {Op} = require('../db/db')
 
 const chargePlayers = async () => {
         players.forEach(p => createPlayer(p.nickname, p.avatar, p.score) )
 }
 
 const getAllPlayers = async (page, size, orderby)=> {  // agregar orderBy
-  
-    
     const { count, rows } = await Player.findAndCountAll({
         limit: Number(size),
         offset: Number(page) * Number(size), 
         order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']]
     })
-     return rows
-    
-    
+     return rows   
 }
 
 const getPlayerById = async (id) => {
@@ -42,5 +38,30 @@ const modifyPlayer = async (id, nickname, avatar, score) => {
     return "Player can't be updated successfully"
 }
 
-module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers}
+const searchPlayer = async(data) => {
+    if(Number(data) == data){
+       let playersFound = Player.findAll({
+            where :{
+                id : {[Op.eq] : data}
+            }
+        })
+        return playersFound
+    } else if(Number(data) !== NaN){
+        let playersFound =Player.findAll({
+            where :{
+                [Op.or] : [
+                    {
+                        nickname : {[Op.iLike]: `%${data}%`}
+                    },
+                    {
+                        status : {[Op.iLike]: `%${data}%`}
+                    }
+                ]
+            }
+        })
+        return playersFound
+    }
+}
+
+module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer}
     

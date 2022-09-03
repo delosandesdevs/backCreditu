@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const router = Router();
-const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers} = require('../controllers/functionPlayers')
+const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer} = require('../controllers/functionPlayers')
 
 
 router.get('/chargeDb', async (req, res) => {
@@ -17,6 +17,19 @@ router.get('/players', async (req, res) => {
     try {
     orderby = orderby !== 'asc' && orderby !== 'desc' ? 'desc' : orderby
     res.status(200).json(await getAllPlayers(page, size, orderby))      
+    } catch (error) {
+        res.status(401).send({
+            name : error.name,
+            msg : error.message
+        })
+    }
+})
+
+router.get('/seachPlayer', async(req, res) =>{
+    const {data} = req.body
+    console.log(typeof data)
+    try {
+        res.status(200).send(await searchPlayer(data))
     } catch (error) {
         res.status(401).send({
             name : error.name,

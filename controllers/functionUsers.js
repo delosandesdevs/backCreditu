@@ -35,8 +35,14 @@ const getUser = async(order) =>{
     }
 }
 
-const createUser = async(name, email, hasPlayer, role) =>{
-    const createdUser = await User.create({name : name, email: email, hasPLayer: hasPlayer, role:role})
+const createAuth0 = async(name, email) =>{
+    const createdUser = await User.findOrCreate({
+        where : {email : email},
+        defaults :{
+            name: name,
+            email : email,
+        }
+    })
     return createdUser
 }
 
@@ -70,4 +76,4 @@ const userPagination = async(page, length) =>{
 }
 
 
-module.exports = {getUser, createUser, modifyUser, deleteUser}
+module.exports = {getUser, createAuth0, modifyUser, deleteUser}
