@@ -8,7 +8,8 @@ const Player = sequelize.define('player', {
     },
     score: {
         type : DataTypes.INTEGER,
-        allowNull : false
+        allowNull : false,
+        defaultValue: 0
     },
     status: {
         type : DataTypes.STRING,
@@ -26,7 +27,7 @@ const Player = sequelize.define('player', {
         type : DataTypes.STRING,
         allowNull : false
     },
-    galeria: {
+    gallery: {
         type : DataTypes.STRING
     }
     },

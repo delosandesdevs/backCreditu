@@ -31,18 +31,19 @@ beforeEach(async() => {
 })
 
 
-xdescribe('CRUD Players', ()=>{
+describe('CRUD Players', ()=>{
 
+   
     describe('Model Player', ()=>{
-        test('Must have a prop nickname, avatar, score, status, galeria', async() => {
-            const response = await Player.create({nickname: "florGesell", avatar: "image.png", score: 56})
-            const newPlayer = response.dataValues
-            expect(newPlayer.id).toBe(3001)
-            expect(newPlayer.nickname).toBeDefined()
-            expect(newPlayer.avatar).toBeDefined()
-            expect(newPlayer.score).toBeDefined()
-            expect(newPlayer.status).toBeDefined()
-            expect(newPlayer.galeria).toBeDefined()
+        test('Must have a prop id, nickname, avatar, score, status, gallery', async() => {
+            
+               const response = await Player.create({nickname: "florGesell", avatar: "image.png", score: 56})
+               const newPlayer = response.dataValues
+               expect(newPlayer.nickname).toBeDefined()
+               expect(newPlayer.avatar).toBeDefined()
+               expect(newPlayer.score).toBeDefined()
+               expect(newPlayer.status).toBeDefined()
+               expect(newPlayer.gallery).toBeDefined()
         })
 
     })
@@ -188,7 +189,7 @@ xdescribe('CRUD Players', ()=>{
      })
 
      test('should return a status 400 if the player does not exist', async () => {
-        const response = await api.delete(`/players/fa86408e-7b5f-469b-9c99-98dd4b4c35c4`).send() 
+        const response = await api.delete(`/players/650`).send() 
         expect(response.statusCode).toBe(400)
      })
   })
