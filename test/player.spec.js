@@ -1,6 +1,5 @@
 const {app} = require('../app') 
 const supertest = require('supertest')  
-const { server } = require('../index')
 const { sequelize } = require('../db/db')
 const Player  = require('../models/Player')
 
@@ -243,7 +242,6 @@ describe('CRUD Players', ()=>{
 
 afterAll(() => {
     sequelize.close()
-    server.close()
 })
 
 
