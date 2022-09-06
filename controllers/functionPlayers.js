@@ -170,14 +170,14 @@ const searchPlayer = async(nickname, status) => {
     }else if (typeof nickname === 'number') {
         const player = await Player.findByPk(nickname)
         if(player) {
-            return {
+            return [{
                 id: player.id,
                 nickname: player.nickname,
                 avatar: player.avatar,
                 status: player.status,
                 score: player.score,
                 ranking: (allPlayers.findIndex(p => p.id === player.id)) + 1
-            }
+            }]
         }else {
             return 'No se encuentra ningun player con el Id indicado'
         }
