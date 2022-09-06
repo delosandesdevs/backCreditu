@@ -10,7 +10,7 @@ email : {
     allowNull : false,
     unique : true
 },
-hasPLayer : {
+hasPlayer : {
     type : DataTypes.BOOLEAN,
     allowNull : false,
     defaultValue : false
