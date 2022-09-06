@@ -25,11 +25,10 @@ router.get('/players', async (req, res) => {
     }
 })
 
-router.get('/seachPlayer', async(req, res) =>{
-    const {data} = req.body
-    console.log(typeof data)
+router.get('/seachplayer', async(req, res) =>{
+    const {nickname, status} = req.body
     try {
-        res.status(200).send(await searchPlayer(data))
+        res.status(200).send(await searchPlayer(nickname, status))
     } catch (error) {
         res.status(401).send({
             name : error.name,

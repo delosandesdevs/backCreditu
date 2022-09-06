@@ -38,29 +38,45 @@ const modifyPlayer = async (id, nickname, avatar, score) => {
     return "Player can't be updated successfully"
 }
 
-const searchPlayer = async(data) => {
-    if(Number(data) == data){
-       let playersFound = Player.findAll({
-            where :{
-                id : {[Op.eq] : data}
-            }
-        })
-        return playersFound
-    } else if(Number(data) !== NaN){
-        let playersFound =Player.findAll({
-            where :{
-                [Op.or] : [
-                    {
-                        nickname : {[Op.iLike]: `%${data}%`}
-                    },
-                    {
-                        status : {[Op.iLike]: `%${data}%`}
-                    }
-                ]
-            }
-        })
-        return playersFound
-    }
+// const searchPlayer = async(data) => {
+//     if(Number(data) == data){
+//        let playersFound = Player.findAll({
+//             where :{
+//                 id : {[Op.eq] : data}
+//             }
+//         })
+//         return playersFound
+//     } else if(Number(data) !== NaN){
+//         let playersFound =Player.findAll({
+//             where :{
+//                 [Op.or] : [
+//                     {
+//                         nickname : {[Op.iLike]: `%${data}%`}
+//                     },
+//                     {
+//                         status : {[Op.iLike]: `%${data}%`}
+//                     }
+//                 ]
+//             }
+//         })
+//         return playersFound
+//     }
+// }
+
+const searchPlayer = async(nickname, status) => {
+    const playersFound = await Player.findAll({
+        where :{
+            [Op.and] :[
+                {
+                    nickname : {[Op.iLike]: `%${nickname}%`}
+                },
+                {
+                    status : {[Op.iLike]: `%${status}%`}
+                }
+            ]
+        }
+    })
+    return playersFound
 }
 
 module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer}
