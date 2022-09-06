@@ -74,18 +74,5 @@ const deleteUser = async(id) =>{
     return `User ${userFound.dataValues.name} has been delete`
 }
 
-const userPagination = async(page, length) =>{
-    let option = {
-        limit : Number(length),
-        offset : Number(page) * Number(length)
-    }
-    const {count, row} = await User.findAndCountAll(option)
-    return {
-        status : 'success',
-        total : count,
-        user : row
-    }
-}
-
 
 module.exports = {getUser, createAuth0, modifyUser, deleteUser}
