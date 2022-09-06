@@ -1,4 +1,5 @@
-const User = require('.././models/User')
+const User = require('../models/User')
+const Player = require('../models/Player')
 
 const getUser = async(order) =>{
     if(order === 'name'){
@@ -36,14 +37,25 @@ const getUser = async(order) =>{
 }
 
 const createAuth0 = async(name, email) =>{
-    const createdUser = await User.findOrCreate({
+    const [createdUser, created] = await User.findOrCreate({
         where : {email : email},
         defaults :{
             name: name,
             email : email,
         }
     })
-    return createdUser
+    if(createdUser.hasPlayer){
+        const allPlayers = await Player.findAll({
+            order : [['score', 'DESC']]
+        })
+        const player = await createdUser.getPlayer()
+        if(player){
+            const ranking = (allPlayers.findIndex(p => p.id === player.id)) + 1
+            return {createdUser, player, ranking}
+        }
+    }
+    
+    return {createdUser, player: false, ranking: false}
 }
 
 const modifyUser = async(name, role, id) =>{

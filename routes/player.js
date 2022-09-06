@@ -55,10 +55,10 @@ router.get('/players/:id', async (req, res) => {
 })
 
 router.post('/players', async (req, res) =>{
-    let {nickname, avatar, score} = req.body
+    let {nickname, avatar, score, user_id} = req.body
     try {
         if(!nickname || !avatar || !score) return res.status(400).json('Player must have a nickname, avatar and score')
-        res.status(200).json(await createPlayer(nickname, avatar, score))  
+        res.status(200).json(await createPlayer(nickname, avatar, score, user_id))  
     } catch (error) {
         res.status(401).send({
             name : error.message,

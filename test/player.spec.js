@@ -35,7 +35,7 @@ describe('CRUD Players', ()=>{
 
    
     describe('Model Player', ()=>{
-        test('Must have a prop id, nickname, avatar, score, status, gallery', async() => {
+        test('Must have a prop id, nickname, avatar, score, status', async() => {
             
                const response = await Player.create({nickname: "florGesell", avatar: "image.png", score: 56})
                const newPlayer = response.dataValues
@@ -43,7 +43,6 @@ describe('CRUD Players', ()=>{
                expect(newPlayer.avatar).toBeDefined()
                expect(newPlayer.score).toBeDefined()
                expect(newPlayer.status).toBeDefined()
-               expect(newPlayer.gallery).toBeDefined()
         })
 
     })
