@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const router = Router();
-const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer} = require('../controllers/functionPlayers')
+const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer, filterByStatus} = require('../controllers/functionPlayers')
 
 
 router.get('/chargeDb', async (req, res) => {
@@ -25,10 +25,22 @@ router.get('/players', async (req, res) => {
     }
 })
 
-router.get('/seachplayer', async(req, res) =>{
-    const {nickname, status} = req.body
+router.get('/searchplayer', async(req, res) =>{
+    const {nickname, status} = req.query
     try {
         res.status(200).send(await searchPlayer(nickname, status))
+    } catch (error) {
+        res.status(401).send({
+            name : error.name,
+            msg : error.message
+        })
+    }
+})
+
+router.get('/filterByStatus', async(req, res) =>{
+    const {status} = req.query
+    try {
+        res.status(200).send(await filterByStatus(status))
     } catch (error) {
         res.status(401).send({
             name : error.name,
@@ -86,9 +98,9 @@ router.delete('/players/:id', async (req, res) => {
 
 router.put('/players/:id', async (req, res) => {
     let {id} = req.params
-    let { nickname, avatar, score } = req.body
+    let { nickname, avatar, score, user_id } = req.body
     try {
-        res.status(200).send(await modifyPlayer(id, nickname, avatar, score))      
+        res.status(200).send(await modifyPlayer(id, nickname, avatar, score, user_id))      
         } catch (error) {
             res.status(401).send({
                 name : error.name,

@@ -12,7 +12,7 @@ const createPlayerDB = async (nickname, avatar, score) => {
     return newPlayer
 }
 
-const getAllPlayers = async (page, size, orderby)=> {  // agregar orderBy
+const getAllPlayers = async (page, size, orderby)=> {  
     const allPlayers = await Player.findAll({
         order : [['score', 'DESC']]
     })
@@ -77,44 +77,46 @@ const deletePlayer = async (id)=> {
     return deletedPlayer
 }
 
-const modifyPlayer = async (id, nickname, avatar, score) => {
+const modifyPlayer = async (id, nickname, avatar, score, user_id) => {
+    const user = await User.findByPk(user_id)
     
-    const update = await Player.update({nickname: nickname, avatar: avatar, score: score}, { where: { id: id}})
-    
-    if(update === 1) return 'Player updated successfully'
-    return "Player can't be updated successfully"
+    if(user){
+         if(user.role === 'admin'){
+            const update = await Player.update({nickname: nickname, avatar: avatar, score: score}, { where: { id: id}})
+            if(update === 1) return 'Player updated successfully'
+            return "Player can't be updated successfully"
+        }else if (user.role === 'user'){
+            const update = await Player.update({nickname: nickname, avatar: avatar}, { where: { id: id}})
+            if(update === 1) return 'Player updated successfully'
+            return "Player can't be updated successfully"
+        }
+    }else{
+        return "User does not exist"
+    }
 }
-
-// const searchPlayer = async(data) => {
-//     if(Number(data) == data){
-//        let playersFound = Player.findAll({
-//             where :{
-//                 id : {[Op.eq] : data}
-//             }
-//         })
-//         return playersFound
-//     } else if(Number(data) !== NaN){
-//         let playersFound =Player.findAll({
-//             where :{
-//                 [Op.or] : [
-//                     {
-//                         nickname : {[Op.iLike]: `%${data}%`}
-//                     },
-//                     {
-//                         status : {[Op.iLike]: `%${data}%`}
-//                     }
-//                 ]
-//             }
-//         })
-//         return playersFound
-//     }
-// }
 
 const searchPlayer = async(nickname, status) => {
     const allPlayers = await Player.findAll({
         order : [['score', 'DESC']]
     })
-    if(typeof nickname === 'string') {
+    ///  --- Si nickname es numero --- 
+    if (Number(nickname) == nickname) {
+        const player = await Player.findByPk(nickname)
+        if(player) {
+            return [{
+                id: player.id,
+                nickname: player.nickname,
+                avatar: player.avatar,
+                status: player.status,
+                score: player.score,
+                ranking: (allPlayers.findIndex(p => p.id === player.id)) + 1
+            }]
+        }else {
+            return 'No se encuentra ningun player con el Id indicado'
+        }
+      // --- Si el nickname es NO es un numero --- 
+    }else if(Number(nickname) !== NaN) {
+        //---- Si mandan nickname & status ---
         if(nickname && status){
             const foundNicknameStatus = await Player.findAll({
             where :{
@@ -137,52 +139,65 @@ const searchPlayer = async(nickname, status) => {
                         status: pf.status,
                         score: pf.score,
                         ranking: (allPlayers.findIndex(p => p.id === pf.id)) + 1
-                    }
-                    return player
-                })
-
+                   
+                      }
+                  return player
+             })
             return playersFound
         }else{
             return 'No se encuentra ninguna coincidencia con ese nickname y status'
         }
         
-
+            //  ---- Si mandan nickname y NO status ----
         }else if (nickname && !status){
             const foundNickname = await Player.findAll({ where : {nickname : {[Op.iLike]: `%${nickname}%`}}})
             if (foundNickname.length > 0){
                 const playersFound = foundNickname.map(pf => {
-                const player = {
-                    id: pf.id,
-                    nickname: pf.nickname,
-                    avatar: pf.avatar,
-                    status: pf.status,
-                    score: pf.score,
-                    ranking: (allPlayers.findIndex(p => p.id === pf.id)) + 1
-                }
-                return player
+                    const player = {
+                        id: pf.id,
+                        nickname: pf.nickname,
+                        avatar: pf.avatar,
+                        status: pf.status,
+                        score: pf.score,
+                        ranking: (allPlayers.findIndex(p => p.id === pf.id)) + 1
+                    }
+                    return player
                 })
                 return playersFound
             }else{
                 return 'No se encuentra ningun player con ese nickname'
             }
-            
-        }
-    }else if (typeof nickname === 'number') {
-        const player = await Player.findByPk(nickname)
-        if(player) {
-            return [{
-                id: player.id,
-                nickname: player.nickname,
-                avatar: player.avatar,
-                status: player.status,
-                score: player.score,
-                ranking: (allPlayers.findIndex(p => p.id === player.id)) + 1
-            }]
-        }else {
-            return 'No se encuentra ningun player con el Id indicado'
         }
     }
 }
 
-module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer}
+const filterByStatus = async (status) => {
+    if(status === 'oro' || status === 'plata' || status === 'bronce' && status){
+        const allPlayers = await Player.findAll({
+            order : [['score', 'DESC']]
+        })
+        const players = await Player.findAll({where: {status: status}})
+
+        if(players.length > 0){
+            const playersFound = players.map(p => {
+                const player = {
+                    id: p.id,
+                    nickname: p.nickname,
+                    avatar: p.avatar,
+                    status: p.status,
+                    score: p.score,
+                    ranking: (allPlayers.findIndex(i => i.id === p.id)) + 1
+                }
+                return player
+            })
+            return playersFound
+        }
+    }else{
+        return 'Status no valido'
+    }
+    
+    
+}
+
+module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer, filterByStatus}
     
