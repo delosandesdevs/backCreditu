@@ -12,7 +12,7 @@ const getAllPlayers = async (page, size, orderby)=> {  // agregar orderBy
         offset: Number(page) * Number(size), 
         order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']]
     })
-     return rows   
+     return {total: count, players: rows}   
 }
 
 const getPlayerById = async (id) => {

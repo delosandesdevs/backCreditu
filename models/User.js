@@ -27,4 +27,9 @@ role : {
 }
 )
 
+let { users, player } = sequelize.models
+
+users.hasOne(player)
+player.belongsTo(users)
+
 module.exports = User

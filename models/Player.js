@@ -26,9 +26,6 @@ const Player = sequelize.define('player', {
     avatar: {
         type : DataTypes.STRING,
         allowNull : false
-    },
-    gallery: {
-        type : DataTypes.STRING
     }
     },
     {
