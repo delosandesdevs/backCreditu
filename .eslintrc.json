@@ -14,8 +14,10 @@
         "ecmaVersion": "latest"
     },
     "plugins": [
-        "react"
+        "react",
+        "jest"
     ],
     "rules": {
+        "indent": ["error", 2]
     }
 }

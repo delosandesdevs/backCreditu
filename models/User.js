@@ -1,29 +1,29 @@
-const {sequelize, DataTypes, Op } = require ('../db/db.js')
+const {sequelize, DataTypes} = require ('../db/db.js')
 
 const User = sequelize.define('users', {
-name : {
+  name : {
     type : DataTypes.STRING,
     allowNull : false
-},
-email : {
+  },
+  email : {
     type : DataTypes.STRING,
     allowNull : false,
     unique : true
-},
-hasPlayer : {
+  },
+  hasPlayer : {
     type : DataTypes.BOOLEAN,
     allowNull : false,
     defaultValue : false
-},
-role : {
+  },
+  role : {
     type : DataTypes.STRING,
     allowNull : false,
-    defaultValue : 'guest'
-}
+    defaultValue : 'user'
+  }
 
 },
 {
-    freezeTableName : true
+  freezeTableName : true
 }
 )
 
