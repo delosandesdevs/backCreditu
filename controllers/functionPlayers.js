@@ -6,7 +6,7 @@ const {Op} = require('../db/db')
 const chargePlayers = async () => {
         players.forEach(p => createPlayerDB(p.nickname, p.avatar, p.score) )
 }
-
+// function db
 const createPlayerDB = async (nickname, avatar, score) => {
     const newPlayer = await Player.create({nickname: nickname, avatar: avatar, score: score, status: score})
     return newPlayer
