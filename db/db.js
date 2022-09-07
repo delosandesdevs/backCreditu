@@ -34,6 +34,6 @@ const sequelize = new Sequelize({
 
 sequelize.authenticate()
 .then(() => console.log('Postgres database connected'))
-.catch(err => console.log('Something goes wrong ' + err))
+.catch(error => console.log('Something goes wrong ' + error.message))
 
 module.exports = { sequelize, DataTypes, Op}

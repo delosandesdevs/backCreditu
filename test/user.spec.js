@@ -170,6 +170,17 @@ describe('CRUD /user',  ()=>{
 
 
         })
+
+        test('validate is database is not connected', async()=>{
+            try {
+                await sequelize.close()
+                await User.create({name : 'fff', email : "9dd"})
+              } catch (error) {
+                console.log(error.message);
+                expect(error.message).toBeDefined();
+              }
+
+        })
     })
 
 })
