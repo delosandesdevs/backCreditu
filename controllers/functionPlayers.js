@@ -99,7 +99,7 @@ const searchPlayer = async(nickname, status) => {
     const allPlayers = await Player.findAll({
         order : [['score', 'DESC']]
     })
-    ///  --- Si nickname es numero --- 
+    //  --- Si nickname es numero --- 
     if (Number(nickname) == nickname) {
         const player = await Player.findByPk(nickname)
         if(player) {
