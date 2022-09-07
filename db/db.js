@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes, Op } = require('sequelize');
+const { Sequelize, DataTypes, Op } = require('sequelize')
 
 
 
@@ -14,26 +14,26 @@ const { Sequelize, DataTypes, Op } = require('sequelize');
 
 
 const sequelize = new Sequelize({
-    database: "ramitest",
-    username: "postgres",
-    password: "R4m1r0.8489",
-    host: "rami.cwdlvpyp14jf.sa-east-1.rds.amazonaws.com",
-    port: 5432,
-    dialect: "postgres",
-    logging: false,
-    dialectOptions: {
-      ssl: {
-        require: true, // This will help you. But you will see nwe error
-        rejectUnauthorized: false // This line will fix new error
-      },
-      logging: false,
-      native: false,
+  database: 'ramitest',
+  username: 'postgres',
+  password: 'R4m1r0.8489',
+  host: 'rami.cwdlvpyp14jf.sa-east-1.rds.amazonaws.com',
+  port: 5432,
+  dialect: 'postgres',
+  logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true, // This will help you. But you will see nwe error
+      rejectUnauthorized: false // This line will fix new error
     },
-  });
+    logging: false,
+    native: false,
+  },
+})
 
 
 sequelize.authenticate()
-.then(() => console.log('Postgres database connected'))
-.catch(error => console.log('Something goes wrong ' + error.message))
+  .then(() => console.log('Postgres database connected'))
+  .catch(error => console.log('Something goes wrong ' + error.message))
 
 module.exports = { sequelize, DataTypes, Op}
