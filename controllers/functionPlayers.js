@@ -109,14 +109,17 @@ const searchPlayer = async(nickname, status, page, size, orderby) => {
   if (Number(nickname) == nickname) {
     const player = await Player.findByPk(nickname)
     if(player) {
-      return [{
-        id: player.id,
-        nickname: player.nickname,
-        avatar: player.avatar,
-        status: player.status,
-        score: player.score,
-        ranking: (allPlayers.findIndex(p => p.id === player.id)) + 1
-      }]
+      return {
+        total: 1,
+        players: [{
+          id: player.id,
+          nickname: player.nickname,
+          avatar: player.avatar,
+          status: player.status,
+          score: player.score,
+          ranking: (allPlayers.findIndex(p => p.id === player.id)) + 1
+        }]
+      }
     }else {
       return 'No se encuentra ningun player con el Id indicado'
     }
