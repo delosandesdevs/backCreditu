@@ -83,16 +83,22 @@ const modifyPlayer = async (id, nickname, avatar, score, user_id) => {
   if(user){
     if(user.role === 'admin'){
       const update = await Player.update({nickname: nickname, avatar: avatar, score: score}, { where: { id: id}})
-      if(update === 1) return 'Player updated successfully'
+      if(update[0] === 1) return 'Player updated successfully'
       return 'Player can\'t be updated successfully'
     }else if (user.role === 'user'){
-      const update = await Player.update({nickname: nickname, avatar: avatar}, { where: { id: id}})
-      if(update === 1) return 'Player updated successfully'
+      const update = await Player.update({nickname: nickname, avatar: avatar}, { where: { id: Number(id)}})
+      if(update[0] === 1) return 'Player updated successfully'
       return 'Player can\'t be updated successfully'
     }
   }else{
     return 'User does not exist'
   }
+}
+
+const checkNickname = async(nickname) => {
+  const player = await Player.findOne({where: {nickname}})
+  if(player) return true
+  return false
 }
 
 const searchPlayer = async(nickname, status) => {
@@ -199,5 +205,15 @@ const filterByStatus = async (status) => {
     
 }
 
-module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer, filterByStatus}
+module.exports = {
+  getAllPlayers, 
+  createPlayer, 
+  deletePlayer, 
+  getPlayerById, 
+  modifyPlayer, 
+  chargePlayers, 
+  searchPlayer, 
+  filterByStatus,
+  checkNickname
+}
     
