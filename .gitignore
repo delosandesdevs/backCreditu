@@ -1,5 +1,5 @@
 node_modules/
-coverag/
+coverage/
 jspm_packages/
 .DS_Store
 .env.local
