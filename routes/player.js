@@ -80,10 +80,10 @@ router.post('/players', async (req, res) =>{
   }
 })
 
-router.delete('/players/:id', async (req, res) => {
-  const {id} = req.params
+router.delete('/players/', async (req, res) => {
+  const {user_id, playerId} = req.body
   try {
-    const deletedPlayer = await deletePlayer(id) 
+    const deletedPlayer = await deletePlayer(user_id, playerId) 
     if(deletedPlayer === 1){
       return res.status(200).json('The player was successfully deleted')    
     }else{
