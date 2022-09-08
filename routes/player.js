@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const router = Router()
-const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer, filterByStatus} = require('../controllers/functionPlayers')
+const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer, filterByStatus, checkNickname} = require('../controllers/functionPlayers')
 
 
 router.get('/chargeDb', async (req, res) => {
@@ -26,10 +26,11 @@ router.get('/players', async (req, res) => {
 })
 
 router.get('/searchplayer', async(req, res) =>{
-  const {nickname, status} = req.query
+  let {nickname, status, page = 0, size = 15, orderby} = req.query
+  orderby = orderby !== 'asc' && orderby !== 'desc' ? 'desc' : orderby
   if(!nickname) return res.status(400).json({message: 'Un nickname es requerido'})
   try {
-    res.status(200).json(await searchPlayer(nickname, status))
+    res.status(200).json(await searchPlayer(nickname, status, page, size, orderby))
   } catch (error) {
     res.status(401).json({
       name : error.name,
@@ -39,9 +40,10 @@ router.get('/searchplayer', async(req, res) =>{
 })
 
 router.get('/filterByStatus', async(req, res) =>{
-  const {status} = req.query
+  let {status, page = 0, size = 15, orderby} = req.query
+  orderby = orderby !== 'asc' && orderby !== 'desc' ? 'desc' : orderby
   try {
-    res.status(200).json(await filterByStatus(status))
+    res.status(200).json(await filterByStatus(status, page, size, orderby))
   } catch (error) {
     res.status(401).json({
       name : error.name,
@@ -67,6 +69,22 @@ router.get('/players/:id', async (req, res) => {
   }
 })
 
+router.get('/checkNickname/:nickname', async (req, res) => {
+  const {nickname} = req.params
+  try {
+    if(nickname){
+      return res.status(200).json(await checkNickname(nickname))   
+    }else{
+      return res.status(400).json('Un nickname es requerido')
+    }
+  } catch (error) {
+    res.status(400).json({
+      name : error.name,
+      msg : error.message
+    })
+  }
+})
+
 router.post('/players', async (req, res) =>{
   const {nickname, avatar, score, user_id} = req.body
   try {
@@ -81,13 +99,14 @@ router.post('/players', async (req, res) =>{
 })
 
 router.delete('/players/', async (req, res) => {
-  const {user_id, playerId} = req.body
+  const {playerId, user_id} = req.body
+  console.log(playerId)
   try {
-    const deletedPlayer = await deletePlayer(user_id, playerId) 
+    const deletedPlayer = await deletePlayer(playerId, user_id) 
     if(deletedPlayer === 1){
-      return res.status(200).json('The player was successfully deleted')    
+      return res.status(200).json('El player fue eliminado correctamente')    
     }else{
-      return res.status(400).json('The player does not exist')
+      return res.status(400).json('el player no existe')
     }     
   } catch (error) {
     res.status(401).json({
@@ -101,8 +120,8 @@ router.put('/players/:id', async (req, res) => {
   const {id} = req.params
   const { nickname, avatar, score, user_id } = req.body
   try {
-     if(!user_id) return res.status(400).json({message: 'un user_id es requerido'})
-     res.status(200).json(await modifyPlayer(id, nickname, avatar, score, user_id))      
+    if(!user_id) return res.status(400).json({message: 'un user_id es requerido'})
+    res.status(200).json(await modifyPlayer(id, nickname, avatar, score, user_id))      
   } catch (error) {
     res.status(401).json({
       name : error.name,

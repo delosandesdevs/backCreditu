@@ -58,28 +58,28 @@ describe('CRUD Players', ()=>{
     })
 
     test('a player must have a nickname', async () => {
-          try {
-            await Player.create({avatar: 'image.png', score: 56, status: 6000})
-          } catch (error) {
-            expect(error.message).toBeDefined()
-          }
-     }) 
+      try {
+        await Player.create({avatar: 'image.png', score: 56, status: 6000})
+      } catch (error) {
+        expect(error.message).toBeDefined()
+      }
+    }) 
 
-     test('a player must have a score', async () => {
-        try {
-          await Player.create({nickname: 'florGesell', avatar: 'image.png', status: 6000})
-        } catch (error) {
-          expect(error.message).toBeDefined()
-        }
-     }) 
+    test('a player must have a score', async () => {
+      try {
+        await Player.create({nickname: 'florGesell', avatar: 'image.png', status: 6000})
+      } catch (error) {
+        expect(error.message).toBeDefined()
+      }
+    }) 
 
-     test('a player must have a avatar', async () => {
+    test('a player must have a avatar', async () => {
       try {
         await Player.create({nickname: 'florGesell', score: 6000, status: 6000})
       } catch (error) {
         expect(error.message).toBeDefined()
       }
-   }) 
+    }) 
 
   })
 
@@ -142,7 +142,7 @@ describe('CRUD Players', ()=>{
     
 
   })
-//nickname, status
+  //nickname, status
   describe('GET /searchplayer', () => {
 
     test('should return a status 200 and return an array whith the players found by nickname AND status', async () => {
@@ -153,8 +153,8 @@ describe('CRUD Players', ()=>{
       const response = await api.get('/searchplayer?nickname=flo&status=oro')
       expect(response.statusCode).toEqual(200)
       expect(response.headers['content-type']).toMatch(/application\/json/)
-      expect(response.body).toHaveLength(2)
-      const nicknames = response.body.map(p => p.nickname)
+      expect(response.body.players).toHaveLength(2)
+      const nicknames = response.body.players.map(p => p.nickname)
       expect(nicknames).toContain('florCreditu', 'florGesell')
       expect(nicknames).not.toContain('florencia')
     })
@@ -165,8 +165,8 @@ describe('CRUD Players', ()=>{
       await Player.create({nickname: 'ramiRama', avatar: 'image.png', score: 9500, status: 9500})
       await Player.create({nickname: 'florencia', avatar: 'image.png', score: 264, status: 264})
       const response = await api.get('/searchplayer?nickname=flo')
-      expect(response.body).toHaveLength(3)
-      const nicknames = response.body.map(p => p.nickname)
+      expect(response.body.players).toHaveLength(3)
+      const nicknames = response.body.players.map(p => p.nickname)
       expect(nicknames).toContain('florCreditu', 'florGesell', 'florencia')
     })
 
@@ -180,26 +180,26 @@ describe('CRUD Players', ()=>{
       const player1 = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
       const player2 = await Player.create({nickname: 'florCreditu', avatar: 'image.png', score: 9845, status: 9845})
       const response = await api.get(`/searchplayer?nickname=${player1.dataValues.id}&status=oro`)
-      expect(response.body[0].id).toEqual(player1.dataValues.id)
-      expect(response.body[0].nickname).toEqual('florGesell')
-      expect(response.body).toHaveLength(1)
+      expect(response.body.players[0].id).toEqual(player1.dataValues.id)
+      expect(response.body.players[0].nickname).toEqual('florGesell')
+      expect(response.body.players).toHaveLength(1)
     })
 
     test('should return a message if the player is not foud by ID', async () => {
       const player1 = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
-      const response = await api.get(`/searchplayer?nickname=5`)
+      const response = await api.get('/searchplayer?nickname=5')
       expect(response.body).toContain('No se encuentra ningun player con el Id indicado')
     })
 
     test('should return a message if the player is not foud by nickname', async () => {
       const player1 = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
-      const response = await api.get(`/searchplayer?nickname=ramiro`)
+      const response = await api.get('/searchplayer?nickname=ramiro')
       expect(response.body).toContain('No se encuentra ningun player con el nickname indicado')
     })
 
     test('should return a message if the player is not foud by nickaname AND status', async () => {
       const player1 = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
-      const response = await api.get(`/searchplayer?nickname=florGesell&status=bronce`)
+      const response = await api.get('/searchplayer?nickname=florGesell&status=bronce')
       expect(response.body).toContain('No se encuentra ninguna coincidencia con ese nickname y status')
     })
 
@@ -277,7 +277,7 @@ describe('CRUD Players', ()=>{
     test('should respond with a 200 status code', async () => {
       const newPlayers = initialPlayers.map(async (p) => await Player.create({nickname: p.nickname, avatar: p.avatar, score: p.score}))
       const players = await Promise.all(newPlayers)
-      await api.delete(`/players/${players[0].dataValues.id}`)
+      await api.delete(`/players/`).send({playerId: players[0].dataValues.id})
         .expect(200)
         .expect('Content-Type', /application\/json/)
     })
@@ -286,14 +286,14 @@ describe('CRUD Players', ()=>{
       const newPlayers = initialPlayers.map(async (p) => await Player.create({nickname: p.nickname, avatar: p.avatar, score: p.score}))
       const players = await Promise.all(newPlayers)
       const playerId = players[0].dataValues.id
-      await api.delete(`/players/${playerId}`)
+      await api.delete(`/players`).send({playerId:playerId})
       const response = await api.get('/players/')
       const ids = response.body.players.map(p => p.id)
       expect(ids).not.toContain(playerId)
     })
 
     test('should return a status 400 if the player does not exist', async () => {
-      const response = await api.delete('/players/650').send() 
+      const response = await api.delete('/players/').send({playerId: 615}) 
       expect(response.statusCode).toBe(400)
     })
   })
@@ -318,7 +318,7 @@ describe('CRUD Players', ()=>{
       await User.create({name: 'florencia', email: 'florencia@gmail.com'})
       const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', user_id: 1})
       await api.put(`/players/${newPlayer.dataValues.id}`).send({nickname: 'ramiRama', user_id: 1})
-      const response = await api.get(`/players`).send()
+      const response = await api.get('/players').send()
       expect(response.body.players[0].avatar).toEqual('image.png')
       expect(response.body.players[0].nickname).toEqual('ramiRama')
     })
@@ -327,7 +327,7 @@ describe('CRUD Players', ()=>{
       await User.create({name: 'florencia', email: 'florencia@gmail.com'})
       const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
       await api.put(`/players/${newPlayer.dataValues.id}`).send({avatar: 'newImage.jpg', user_id: 1})
-      const response = await api.get(`/players`).send()
+      const response = await api.get('/players').send()
       expect(response.body.players[0].avatar).toEqual('newImage.jpg')
       expect(response.body.players[0].score).toBe(56)
       expect(response.body.players[0].nickname).toEqual('florGesell')
@@ -337,7 +337,7 @@ describe('CRUD Players', ()=>{
       await User.create({name: 'florencia', email: 'florencia@gmail.com'})
       const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
       await api.put(`/players/${newPlayer.dataValues.id}`).send({score: 2000, user_id: 1})
-      const response = await api.get(`/players`).send()
+      const response = await api.get('/players').send()
       expect(response.body.players[0].score).toBe(56)
     })
   
