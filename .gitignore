@@ -1,5 +1,5 @@
 node_modules/
-covegare/
+coverag/
 jspm_packages/
 .DS_Store
 .env.local
