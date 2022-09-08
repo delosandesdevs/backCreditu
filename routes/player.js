@@ -26,10 +26,11 @@ router.get('/players', async (req, res) => {
 })
 
 router.get('/searchplayer', async(req, res) =>{
-  const {nickname, status} = req.query
+  let {nickname, status, page = 0, size = 15, orderby} = req.query
+  orderby = orderby !== 'asc' && orderby !== 'desc' ? 'desc' : orderby
   if(!nickname) return res.status(400).json({message: 'Un nickname es requerido'})
   try {
-    res.status(200).json(await searchPlayer(nickname, status))
+    res.status(200).json(await searchPlayer(nickname, status, page, size, orderby))
   } catch (error) {
     res.status(401).json({
       name : error.name,
@@ -39,9 +40,10 @@ router.get('/searchplayer', async(req, res) =>{
 })
 
 router.get('/filterByStatus', async(req, res) =>{
-  const {status} = req.query
+  let {status, page = 0, size = 15, orderby} = req.query
+  orderby = orderby !== 'asc' && orderby !== 'desc' ? 'desc' : orderby
   try {
-    res.status(200).json(await filterByStatus(status))
+    res.status(200).json(await filterByStatus(status, page, size, orderby))
   } catch (error) {
     res.status(401).json({
       name : error.name,

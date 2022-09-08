@@ -101,7 +101,7 @@ const checkNickname = async(nickname) => {
   return false
 }
 
-const searchPlayer = async(nickname, status) => {
+const searchPlayer = async(nickname, status, page, size, orderby) => {
   const allPlayers = await Player.findAll({
     order : [['score', 'DESC']]
   })
@@ -124,20 +124,24 @@ const searchPlayer = async(nickname, status) => {
   }else if(Number(nickname) !== NaN) {
     //---- Si mandan nickname & status ---
     if(nickname && status){
-      const foundNicknameStatus = await Player.findAll({
-        where :{
-          [Op.and] :[
-            {
-              nickname : {[Op.iLike]: `%${nickname}%`}
-            },
-            {
-              status : {[Op.iLike]: `%${status}%`}
-            }
-          ]
-        }
-      })
-      if(foundNicknameStatus.length > 0){
-        const playersFound = foundNicknameStatus.map(pf => {
+      const {count, rows} = await Player.findAndCountAll(
+        {
+          limit: Number(size),
+          offset: Number(page) * Number(size) ,
+          order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']],
+          where :{
+            [Op.and] :[
+              {
+                nickname : {[Op.iLike]: `%${nickname}%`}
+              },
+              {
+                status : {[Op.iLike]: `%${status}%`}
+              }
+            ]
+          }
+        })
+      if(rows.length > 0){
+        const playersFound = rows.map(pf => {
           const player = {
             id: pf.id,
             nickname: pf.nickname,
@@ -149,16 +153,23 @@ const searchPlayer = async(nickname, status) => {
           }
           return player
         })
-        return playersFound
+        return {total: count, players: playersFound}
       }else{
         return 'No se encuentra ninguna coincidencia con ese nickname y status'
       }
         
       //  ---- Si mandan nickname y NO status ----
     }else if (nickname && !status){
-      const foundNickname = await Player.findAll({ where : {nickname : {[Op.iLike]: `%${nickname}%`}}})
-      if (foundNickname.length > 0){
-        const playersFound = foundNickname.map(pf => {
+      const {count, rows} = await Player.findAndCountAll(
+      {
+        limit: Number(size),
+        offset: Number(page) * Number(size), 
+        order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']], 
+        where : {nickname : {[Op.iLike]: `%${nickname}%`}}
+      }
+      )
+      if (rows.length > 0){
+        const playersFound = rows.map(pf => {
           const player = {
             id: pf.id,
             nickname: pf.nickname,
@@ -169,7 +180,7 @@ const searchPlayer = async(nickname, status) => {
           }
           return player
         })
-        return playersFound
+        return {total: count, players: playersFound}
       }else{
         return 'No se encuentra ningun player con el nickname indicado'
       }
@@ -177,26 +188,41 @@ const searchPlayer = async(nickname, status) => {
   }
 }
 
-const filterByStatus = async (status) => {
-  if(status === 'oro' || status === 'plata' || status === 'bronce' && status){
+const filterByStatus = async (status, page, size, orderby) => {
+  if(status === 'oro' || status === 'plata' || status === 'bronce' || 'total' && status){
     const allPlayers = await Player.findAll({
       order : [['score', 'DESC']]
     })
-    const players = await Player.findAll({where: {status: status}})
 
-    if(players.length > 0){
-      const playersFound = players.map(p => {
-        const player = {
-          id: p.id,
-          nickname: p.nickname,
-          avatar: p.avatar,
-          status: p.status,
-          score: p.score,
-          ranking: (allPlayers.findIndex(i => i.id === p.id)) + 1
-        }
-        return player
+    if(status === 'total'){
+      const allPlayers = await getAllPlayers(page, size, orderby)
+      return allPlayers
+    }else{
+      const {count, rows} = await Player.findAndCountAll({
+        limit: Number(size),
+        offset: Number(page) * Number(size), 
+        order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']],
+        where: {status: status}
       })
-      return playersFound
+
+      if(rows.length > 0){
+        const playersFound = rows.map(p => {
+          const player = {
+            id: p.id,
+            nickname: p.nickname,
+            avatar: p.avatar,
+            status: p.status,
+            score: p.score,
+            ranking: (allPlayers.findIndex(i => i.id === p.id)) + 1
+          }
+          return player
+        })
+        if(orderby === 'asc'){
+          return {total: count, players: playersFound.sort((a, b) => b.ranking - a.ranking)}    
+        }else if(orderby === 'desc'){
+          return {total: count, players: playersFound.sort((a, b) => a.ranking - b.ranking)}    
+        }
+      }
     }
   }else{
     return 'Status no valido'
