@@ -128,7 +128,7 @@ const searchPlayer = async(nickname, status, page, size, orderby) => {
     // --- Si el nickname es NO es un numero --- 
   }else if(Number(nickname) !== NaN) {
     //---- Si mandan nickname & status ---
-    if(nickname && status){
+    if( status && status !== 'todos' ){
       const {count, rows} = await Player.findAndCountAll(
         {
           limit: Number(size),
@@ -158,13 +158,17 @@ const searchPlayer = async(nickname, status, page, size, orderby) => {
           }
           return player
         })
-        return {total: count, players: playersFound}
+        if(orderby === 'asc'){
+          return {total: count, players: playersFound.sort((a, b) => b.ranking - a.ranking)}    
+        }else if(orderby === 'desc'){
+          return {total: count, players: playersFound.sort((a, b) => a.ranking - b.ranking)}    
+        }
       }else{
         return 'No se encuentra ninguna coincidencia con ese nickname y status'
       }
         
       //  ---- Si mandan nickname y NO status ----
-    }else if (nickname && !status){
+    }else if (status === 'todos' || !status ){
       const {count, rows} = await Player.findAndCountAll(
       {
         limit: Number(size),
@@ -185,7 +189,11 @@ const searchPlayer = async(nickname, status, page, size, orderby) => {
           }
           return player
         })
-        return {total: count, players: playersFound}
+        if(orderby === 'asc'){
+          return {total: count, players: playersFound.sort((a, b) => b.ranking - a.ranking)}    
+        }else if(orderby === 'desc'){
+          return {total: count, players: playersFound.sort((a, b) => a.ranking - b.ranking)}    
+        }
       }else{
         return 'No se encuentra ningun player con el nickname indicado'
       }
