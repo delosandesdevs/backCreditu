@@ -153,8 +153,8 @@ describe('CRUD Players', ()=>{
       const response = await api.get('/searchplayer?nickname=flo&status=oro')
       expect(response.statusCode).toEqual(200)
       expect(response.headers['content-type']).toMatch(/application\/json/)
-      expect(response.body).toHaveLength(2)
-      const nicknames = response.body.map(p => p.nickname)
+      expect(response.body.players).toHaveLength(2)
+      const nicknames = response.body.players.map(p => p.nickname)
       expect(nicknames).toContain('florCreditu', 'florGesell')
       expect(nicknames).not.toContain('florencia')
     })
@@ -165,8 +165,8 @@ describe('CRUD Players', ()=>{
       await Player.create({nickname: 'ramiRama', avatar: 'image.png', score: 9500, status: 9500})
       await Player.create({nickname: 'florencia', avatar: 'image.png', score: 264, status: 264})
       const response = await api.get('/searchplayer?nickname=flo')
-      expect(response.body).toHaveLength(3)
-      const nicknames = response.body.map(p => p.nickname)
+      expect(response.body.players).toHaveLength(3)
+      const nicknames = response.body.players.map(p => p.nickname)
       expect(nicknames).toContain('florCreditu', 'florGesell', 'florencia')
     })
 
@@ -180,9 +180,9 @@ describe('CRUD Players', ()=>{
       const player1 = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
       const player2 = await Player.create({nickname: 'florCreditu', avatar: 'image.png', score: 9845, status: 9845})
       const response = await api.get(`/searchplayer?nickname=${player1.dataValues.id}&status=oro`)
-      expect(response.body[0].id).toEqual(player1.dataValues.id)
-      expect(response.body[0].nickname).toEqual('florGesell')
-      expect(response.body).toHaveLength(1)
+      expect(response.body.players[0].id).toEqual(player1.dataValues.id)
+      expect(response.body.players[0].nickname).toEqual('florGesell')
+      expect(response.body.players).toHaveLength(1)
     })
 
     test('should return a message if the player is not foud by ID', async () => {
@@ -277,7 +277,7 @@ describe('CRUD Players', ()=>{
     test('should respond with a 200 status code', async () => {
       const newPlayers = initialPlayers.map(async (p) => await Player.create({nickname: p.nickname, avatar: p.avatar, score: p.score}))
       const players = await Promise.all(newPlayers)
-      await api.delete(`/players/${players[0].dataValues.id}`)
+      await api.delete(`/players/`).send({playerId: players[0].dataValues.id})
         .expect(200)
         .expect('Content-Type', /application\/json/)
     })
@@ -286,14 +286,14 @@ describe('CRUD Players', ()=>{
       const newPlayers = initialPlayers.map(async (p) => await Player.create({nickname: p.nickname, avatar: p.avatar, score: p.score}))
       const players = await Promise.all(newPlayers)
       const playerId = players[0].dataValues.id
-      await api.delete(`/players/${playerId}`)
+      await api.delete(`/players`).send({playerId:playerId})
       const response = await api.get('/players/')
       const ids = response.body.players.map(p => p.id)
       expect(ids).not.toContain(playerId)
     })
 
     test('should return a status 400 if the player does not exist', async () => {
-      const response = await api.delete('/players/650').send() 
+      const response = await api.delete('/players/').send({playerId: 615}) 
       expect(response.statusCode).toBe(400)
     })
   })

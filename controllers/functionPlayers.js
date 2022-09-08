@@ -72,8 +72,10 @@ const createPlayer = async (nickname, avatar, score, user_id)=> {
   return 'El usuario no existe'
 }
 
-const deletePlayer = async (user_id, playerId)=> {
-  await User.update({hasPlayer: false},{where: {id: user_id}})
+const deletePlayer = async (playerId, user_id)=> {
+  if(user_id){
+    await User.update({hasPlayer: false},{where: {id: user_id}})
+  }
   const deletedPlayer = await Player.destroy({where: {id: playerId}})
   return deletedPlayer
 }

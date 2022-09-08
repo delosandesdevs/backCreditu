@@ -99,13 +99,14 @@ router.post('/players', async (req, res) =>{
 })
 
 router.delete('/players/', async (req, res) => {
-  const {user_id, playerId} = req.body
+  const {playerId, user_id} = req.body
+  console.log(playerId)
   try {
-    const deletedPlayer = await deletePlayer(user_id, playerId) 
+    const deletedPlayer = await deletePlayer(playerId, user_id) 
     if(deletedPlayer === 1){
-      return res.status(200).json('The player was successfully deleted')    
+      return res.status(200).json('El player fue eliminado correctamente')    
     }else{
-      return res.status(400).json('The player does not exist')
+      return res.status(400).json('el player no existe')
     }     
   } catch (error) {
     res.status(401).json({
