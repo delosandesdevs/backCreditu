@@ -202,12 +202,12 @@ const searchPlayer = async(nickname, status, page, size, orderby) => {
 }
 
 const filterByStatus = async (status, page, size, orderby) => {
-  if(status === 'oro' || status === 'plata' || status === 'bronce' || 'total' && status){
+  if(status === 'oro' || status === 'plata' || status === 'bronce' || 'todos' && status){
     const allPlayers = await Player.findAll({
       order : [['score', 'DESC']]
     })
 
-    if(status === 'total'){
+    if(status === 'todos'){
       const allPlayers = await getAllPlayers(page, size, orderby)
       return allPlayers
     }else{
