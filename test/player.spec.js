@@ -1,3 +1,4 @@
+require('dotenv').config()
 const {app} = require('../app') 
 const supertest = require('supertest')  
 const { sequelize } = require('../db/db')
@@ -27,6 +28,7 @@ const initialPlayers = [
 ]
 
 beforeEach(async() => {
+  
   await sequelize.sync({ force: true })
 })
 
@@ -390,7 +392,8 @@ describe('CATCH errors', () => {
 })
 
 
-afterAll(() => {
+afterAll(async () => {
+  await sequelize.sync({ force: true })
   sequelize.close()
 })
 
