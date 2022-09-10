@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes, Op } = require('sequelize')
-
-
+const {DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT} = process.env
+console.log(DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT)
 
 // const sequelize = new Sequelize(`postgres://postgres:R4m1r0.8489@localhost:5432/fyh`, {
 //   logging: false, // set to console.log to see the raw SQL queries
@@ -14,11 +14,11 @@ const { Sequelize, DataTypes, Op } = require('sequelize')
 
 
 const sequelize = new Sequelize({
-  database: 'ramitest',
-  username: 'postgres',
-  password: 'R4m1r0.8489',
-  host: 'rami.cwdlvpyp14jf.sa-east-1.rds.amazonaws.com',
-  port: 5432,
+  database: DB_NAME,
+  username: DB_USERNAME,
+  password: DB_PASSWORD,
+  host: DB_HOST,
+  port: DB_PORT,
   dialect: 'postgres',
   logging: false,
   dialectOptions: {

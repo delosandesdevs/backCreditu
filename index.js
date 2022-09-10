@@ -4,7 +4,6 @@ const { sequelize } = require('./db/db')
 
 let port = 8080
 const {PORT} = process.env
-console.log(process.env)
 
 app.listen(PORT, () => {
   console.log('Server run on Port =>  ' + PORT)
