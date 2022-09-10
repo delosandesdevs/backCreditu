@@ -1,3 +1,4 @@
+require('dotenv').config()
 const {app} = require('../app') 
 const supertest = require('supertest')  
 const { sequelize } = require('../db/db')
