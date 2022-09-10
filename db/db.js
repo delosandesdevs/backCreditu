@@ -7,7 +7,7 @@ console.log(DB_NAME, DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT)
 //   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
 // });
 
-// const sequelize = new Sequelize(`postgres://postgres:1234@localhost/aws_test`, {
+/// const sequelize = new Sequelize(`postgres://postgres:1234@localhost/aws_test`, {
 //   logging: false, // set to console.log to see the raw SQL queries
 //   native: false, // lets Sequelize know we can use pg-native for ~30% more speed
 // });
