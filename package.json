@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "jest --detectOpenHandles --silent"
+    "test": "jest --detectOpenHandles --verbose",
+    "lint": "eslint . --fix",
+    "test:cov": "jest --coverage"
   },
   "author": "deLosAndes",
   "license": "MIT-0",
@@ -26,6 +28,9 @@
     "sequelize": "^6.21.3"
   },
   "devDependencies": {
+    "eslint": "^8.23.0",
+    "eslint-plugin-jest": "^27.0.1",
+    "eslint-plugin-react": "^7.31.7",
     "jest": "^29.0.1",
     "nodemon": "^2.0.19",
     "supertest": "^6.2.4"

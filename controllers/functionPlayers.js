@@ -1,39 +1,258 @@
 const Player = require('../models/Player')
+const User = require('../models/User')
+const players = require('../playersDb.json')
+const {Op} = require('../db/db')
 
+const chargePlayers = async () => {
+  players.forEach(p => createPlayerDB(p.nickname, p.avatar, p.score) )
+}
+// function db
+const createPlayerDB = async (nickname, avatar, score) => {
+  const newPlayer = await Player.create({nickname: nickname, avatar: avatar, score: score, status: score})
+  return newPlayer
+}
 
-const getAllPlayers = async ()=> {
-    const allPlayers = await Player.findAll(
-        {
-        order: [
-            ['score', 'DESC']
-        ]
+const getAllPlayers = async (page, size, orderby)=> {  
+  const allPlayers = await Player.findAll({
+    order : [['score', 'DESC']]
+  })
+  const { count, rows } = await Player.findAndCountAll({
+    limit: Number(size),
+    offset: Number(page) * Number(size), 
+    order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']]
+  })
+  const players = rows.map(row => {
+    return {
+      id: row.id,
+      nickname: row.nickname,
+      avatar: row.avatar,
+      score: row.score,
+      status: row.status,
+      ranking: (allPlayers.findIndex(p => p.id === row.id)) + 1
     }
-    )
-    return allPlayers
+  })
+  if(orderby === 'asc'){
+    return {total: count, players: players.sort((a, b) => b.ranking - a.ranking)}    
+  }else if(orderby === 'desc'){
+    return {total: count, players: players.sort((a, b) => a.ranking - b.ranking)}    
+  }
+      
 }
 
 const getPlayerById = async (id) => {
-    const player = await Player.findByPk(id)
-    return player
+  const player = await Player.findByPk(id)
+  return player
 }
 
-const createPlayer = async (nickname, avatar, score)=> {
-    const newPlayer = await Player.create({nickname: nickname, avatar: avatar, score: score, status: score})
-    return newPlayer
+const createPlayer = async (nickname, avatar, score, user_id)=> {
+  const user = await User.findByPk(user_id)
+  if(user){
+    if(!user.hasPlayer){
+      const [newPlayer, created] = await Player.findOrCreate({
+        where: {nickname},
+        defaults: {
+          nickname,
+          avatar,
+          score,
+          status: score
+        }
+      })
+      if(created){
+        user.setPlayer(newPlayer)
+        await User.update({hasPlayer: true}, { where: { id: user_id}})
+        return newPlayer
+      }else{
+        return 'El nickname ya existe'
+      }
+            
+    }else{
+      return 'El usuario ya tiene un player'
+    }
+  }
+  return 'El usuario no existe'
 }
 
-const deletePlayer = async (id)=> {
-    await Player.destroy({where: {id: id}})
-    return 'Player deleted successfully'
+const deletePlayer = async (playerId, user_id)=> {
+  if(user_id){
+    await User.update({hasPlayer: false},{where: {id: user_id}})
+  }
+  const deletedPlayer = await Player.destroy({where: {id: playerId}})
+  return deletedPlayer
 }
 
-const modifyPlayer = async (id, nickname, avatar) => {
+const modifyPlayer = async (id, nickname, avatar, score, user_id) => {
+  const user = await User.findByPk(user_id)
+  if(user){
+    if(user.role === 'admin'){
+      const update = await Player.update({nickname: nickname, avatar: avatar, score: score}, { where: { id: id}})
+      if(update[0] === 1) return 'Player updated successfully'
+      return 'Player can\'t be updated successfully'
+    }else if (user.role === 'user'){
+      const update = await Player.update({nickname: nickname, avatar: avatar}, { where: { id: Number(id)}})
+      if(update[0] === 1) return 'Player updated successfully'
+      return 'Player can\'t be updated successfully'
+    }
+  }else{
+    return 'User does not exist'
+  }
+}
+
+const checkNickname = async(nickname) => {
+  const player = await Player.findOne({where: {nickname}})
+  if(player) return true
+  return false
+}
+
+const searchPlayer = async(nickname, status, page, size, orderby) => {
+  const allPlayers = await Player.findAll({
+    order : [['score', 'DESC']]
+  })
+  //  --- Si nickname es numero --- 
+  if (Number(nickname) == nickname) {
+    const player = await Player.findByPk(nickname)
+    if(player) {
+      return {
+        total: 1,
+        players: [{
+          id: player.id,
+          nickname: player.nickname,
+          avatar: player.avatar,
+          status: player.status,
+          score: player.score,
+          ranking: (allPlayers.findIndex(p => p.id === player.id)) + 1
+        }]
+      }
+    }else {
+      return 'No se encuentra ningun player con el Id indicado'
+    }
+    // --- Si el nickname es NO es un numero --- 
+  }else if(Number(nickname) !== NaN) {
+    //---- Si mandan nickname & status ---
+    if( status && status !== 'todos' ){
+      const {count, rows} = await Player.findAndCountAll(
+        {
+          limit: Number(size),
+          offset: Number(page) * Number(size) ,
+          order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']],
+          where :{
+            [Op.and] :[
+              {
+                nickname : {[Op.iLike]: `%${nickname}%`}
+              },
+              {
+                status : {[Op.iLike]: `%${status}%`}
+              }
+            ]
+          }
+        })
+      if(rows.length > 0){
+        const playersFound = rows.map(pf => {
+          const player = {
+            id: pf.id,
+            nickname: pf.nickname,
+            avatar: pf.avatar,
+            status: pf.status,
+            score: pf.score,
+            ranking: (allPlayers.findIndex(p => p.id === pf.id)) + 1
+                   
+          }
+          return player
+        })
+        if(orderby === 'asc'){
+          return {total: count, players: playersFound.sort((a, b) => b.ranking - a.ranking)}    
+        }else if(orderby === 'desc'){
+          return {total: count, players: playersFound.sort((a, b) => a.ranking - b.ranking)}    
+        }
+      }else{
+        return 'No se encuentra ninguna coincidencia con ese nickname y status'
+      }
+        
+      //  ---- Si mandan nickname y NO status ----
+    }else if (status === 'todos' || !status ){
+      const {count, rows} = await Player.findAndCountAll(
+      {
+        limit: Number(size),
+        offset: Number(page) * Number(size), 
+        order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']], 
+        where : {nickname : {[Op.iLike]: `%${nickname}%`}}
+      }
+      )
+      if (rows.length > 0){
+        const playersFound = rows.map(pf => {
+          const player = {
+            id: pf.id,
+            nickname: pf.nickname,
+            avatar: pf.avatar,
+            status: pf.status,
+            score: pf.score,
+            ranking: (allPlayers.findIndex(p => p.id === pf.id)) + 1
+          }
+          return player
+        })
+        if(orderby === 'asc'){
+          return {total: count, players: playersFound.sort((a, b) => b.ranking - a.ranking)}    
+        }else if(orderby === 'desc'){
+          return {total: count, players: playersFound.sort((a, b) => a.ranking - b.ranking)}    
+        }
+      }else{
+        return 'No se encuentra ningun player con el nickname indicado'
+      }
+    }
+  }
+}
+
+const filterByStatus = async (status, page, size, orderby) => {
+  if(status === 'oro' || status === 'plata' || status === 'bronce' || 'todos' && status){
+    const allPlayers = await Player.findAll({
+      order : [['score', 'DESC']]
+    })
+
+    if(status === 'todos'){
+      const allPlayers = await getAllPlayers(page, size, orderby)
+      return allPlayers
+    }else{
+      const {count, rows} = await Player.findAndCountAll({
+        limit: Number(size),
+        offset: Number(page) * Number(size), 
+        order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']],
+        where: {status: status}
+      })
+
+      if(rows.length > 0){
+        const playersFound = rows.map(p => {
+          const player = {
+            id: p.id,
+            nickname: p.nickname,
+            avatar: p.avatar,
+            status: p.status,
+            score: p.score,
+            ranking: (allPlayers.findIndex(i => i.id === p.id)) + 1
+          }
+          return player
+        })
+        if(orderby === 'asc'){
+          return {total: count, players: playersFound.sort((a, b) => b.ranking - a.ranking)}    
+        }else if(orderby === 'desc'){
+          return {total: count, players: playersFound.sort((a, b) => a.ranking - b.ranking)}    
+        }
+      }
+    }
+  }else{
+    return 'Status no valido'
+  }
     
-    const update = await Player.update({nickname: nickname, avatar: avatar}, { where: { id: id}})
     
-    if(update === 1) return 'Player updated successfully'
-    return "Player can't be updated successfully"
 }
 
-module.exports = {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer}
+module.exports = {
+  getAllPlayers, 
+  createPlayer, 
+  deletePlayer, 
+  getPlayerById, 
+  modifyPlayer, 
+  chargePlayers, 
+  searchPlayer, 
+  filterByStatus,
+  checkNickname
+}
     
