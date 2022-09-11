@@ -11,7 +11,7 @@ const {DB_NAME,
   DB_HOST_LOCAL, 
   DB_PORT_LOCAL} = process.env
 
-
+//
 const sequelize = new Sequelize({
   database: process.env.NODE_ENV === 'production' ? DB_NAME : DB_NAME_LOCAL,
   username: process.env.NODE_ENV === 'production' ? DB_USERNAME : DB_USERNAME_LOCAL,
