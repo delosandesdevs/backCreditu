@@ -110,7 +110,7 @@ const searchPlayer = async(nickname, status, page, size, orderby) => {
     }
     
     // --- Busqueda por nombre o status --- 
-  }else if(nickname && Number(nickname) !== NaN) {
+  }else if(nickname && Number(nickname) !== NaN) {  // eslint-disable-line
     //---- busqueda combinada entre name y status(oro, bronce, plata) ---
     if( status && status !== 'todos' ){
       const {count, rows} = await Player.findAndCountAll(
@@ -143,12 +143,12 @@ const searchPlayer = async(nickname, status, page, size, orderby) => {
       //  ---- busqueda en toda la base por nombre ----
     }else if (status === 'todos' || !status ){
       const {count, rows} = await Player.findAndCountAll(
-      {
-        limit: Number(size),
-        offset: Number(page) * Number(size), 
-        order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']], 
-        where : {nickname : {[Op.iLike]: `%${nickname}%`}}
-      }
+        {
+          limit: Number(size),
+          offset: Number(page) * Number(size), 
+          order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']], 
+          where : {nickname : {[Op.iLike]: `%${nickname}%`}}
+        }
       )
       if (rows.length > 0){
         const playersFound = rows.map(async pf => {
@@ -163,28 +163,28 @@ const searchPlayer = async(nickname, status, page, size, orderby) => {
     }
     /// --- all players filter by status ----
   }else if (!nickname && status){
-      if(status === 'todos'){
-        const allPlayers = await getAllPlayers(page, size, orderby)
-        return allPlayers
-      }else{
-        const {count, rows} = await Player.findAndCountAll({
-          limit: Number(size),
-          offset: Number(page) * Number(size), 
-          order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']],
-          where: {status: status}
-        })
-        if(rows.length > 0){
-          const playersFound = rows.map(async (p) => {
-            const player = await modelPlayer(p)
-            return player
-          })
-          const players = await Promise.all(playersFound)
-          return orderAscDesc(orderby, count, players)
-        }
-      }
+    if(status === 'todos'){
+      const allPlayers = await getAllPlayers(page, size, orderby)
+      return allPlayers
     }else{
-      return 'Status no valido'
+      const {count, rows} = await Player.findAndCountAll({
+        limit: Number(size),
+        offset: Number(page) * Number(size), 
+        order: [['score', orderby === 'desc' ? 'DESC' : 'ASC']],
+        where: {status: status}
+      })
+      if(rows.length > 0){
+        const playersFound = rows.map(async (p) => {
+          const player = await modelPlayer(p)
+          return player
+        })
+        const players = await Promise.all(playersFound)
+        return orderAscDesc(orderby, count, players)
+      }
     }
+  }else{
+    return 'Status no valido'
+  }
   
 }
 
