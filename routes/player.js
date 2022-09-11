@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const router = Router()
-const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer, filterByStatus, checkNickname} = require('../controllers/functionPlayers')
+const {getAllPlayers, createPlayer, deletePlayer, modifyPlayer, chargePlayers, searchPlayer, checkNickname} = require('../controllers/functionPlayers')
 
 
 router.get('/chargeDb', async (req, res) => {
