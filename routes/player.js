@@ -97,8 +97,8 @@ router.put('/players/:id', async (req, res) => {
     if(bringPlayer.userId !== user_id){
       const nicknameFound = await checkNickname(nickname)
       if(nicknameFound) return res.status(400).json({message: 'El nickname ya existe'})
-      if(!user_id) return res.status(400).json({message: 'un user_id es requerido'})
     }
+    if(!user_id) return res.status(400).json({message: 'un user_id es requerido'})
 
     res.status(200).json(await modifyPlayer(id, nickname, avatar, score, user_id))      
   } catch (error) {
