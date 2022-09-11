@@ -172,9 +172,9 @@ describe('CRUD Players', ()=>{
       expect(nicknames).toContain('florCreditu', 'florGesell', 'florencia')
     })
 
-    test('should return a status 400 if the nickname is not given', async () => {
+    test('should return a status 400 if the nickname AND status is not given', async () => {
       await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
-      const response = await api.get('/searchplayer?status=oro')
+      const response = await api.get('/searchplayer')
       expect(response.statusCode).toEqual(400)
     })
 
@@ -207,29 +207,7 @@ describe('CRUD Players', ()=>{
 
   })
   
-  describe('GET /players/:id', () => {  // por nickname y ID y status  // cambiar ids
   
-    test('should respond with a 200 status code', async () => {
-      await api.get('/players')
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
-    })
-     
-    test('should find a player by ID', async () => {
-      const postPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56})
-      const newPlayer = postPlayer.dataValues
-      const response = await api.get(`/players/${newPlayer.id}`).send() 
-      expect(response.body).toBeInstanceOf(Object) 
-      expect(response.body.nickname).toBe('florGesell')
-      expect(response.body.avatar).toBe('image.png')
-      expect(response.body.score).toBe(56)
-    })
-
-    test('should return a status 400 if the player does not exist', async () => {
-      const response = await api.get('/players/50000').send() 
-      expect(response.statusCode).toBe(400)
-    })
-  })
   
   describe('POST /players', () => {
   
@@ -254,12 +232,6 @@ describe('CRUD Players', ()=>{
       expect(response.body.players[0]).toHaveProperty('ranking', 1)
     })
 
-
-
-    test('a player without score can\'t be created', async () => {
-      const response = await api.post('/players').send({nickname: 'ramiRama', avatar:'imagen.png'}) 
-      expect(response.statusCode).toBe(400) 
-    })
 
     test('a player without a nickname can\'t be created', async () => {
       const response = await api.post('/players').send({avatar:'imagen.png', score: 32}) 
@@ -347,12 +319,18 @@ describe('CRUD Players', ()=>{
       await User.create({name: 'florencia', email: 'florencia@gmail.com', role: 'admin'})
       const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
       await api.put(`/players/${newPlayer.dataValues.id}`).send({score: 4000, user_id: 1})
-      const response = await api.get(`/players/${newPlayer.dataValues.id}`).send()
-      expect(response.body.avatar).toEqual('image.png')
-      expect(response.body.score).toBe(4000)
-      expect(response.body.nickname).toEqual('florGesell')
+      const response = await api.get(`/searchplayer?nickname=${newPlayer.dataValues.id}`).send()
+      expect(response.body.players[0].avatar).toEqual('image.png')
+      expect(response.body.players[0].score).toBe(4000)
+      expect(response.body.players[0].nickname).toEqual('florGesell')
     })
 
+    test('a user cant change the score', async () => {
+      await User.create({name: 'florencia', email: 'florencia@gmail.com'})
+      const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
+      const response = await api.put(`/players/${newPlayer.dataValues.id}`).send({score: 4000, user_id: 1})
+      expect(response.body).toContain('El player no pudo ser modificado')
+    })
     
 
     test('should return a status 400 if user_id is not pass', async () => {
