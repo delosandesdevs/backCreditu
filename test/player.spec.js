@@ -337,7 +337,7 @@ describe('CRUD Players', ()=>{
       await User.create({name: 'florencia', email: 'florencia@gmail.com', role: 'admin'})
       const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
       const response = await api.put(`/players/${newPlayer.dataValues.id}`).send({score: 4000})
-      expect(response.statusCode).toBe(400) 
+      expect(response.statusCode).toBe(700) 
       expect(response.body.message).toEqual('un user_id es requerido')
     })
     // errro 400 si no se pasa user_id
