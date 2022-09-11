@@ -37,7 +37,7 @@ const getUser = async(order) =>{
 }
 
 const createAuth0 = async(name, email) =>{
-  const [createdUser, created] = await User.findOrCreate({
+  const [createdUser, created] = await User.findOrCreate({   // eslint-disable-line
     where : {email : email},
     defaults :{
       name: name,
