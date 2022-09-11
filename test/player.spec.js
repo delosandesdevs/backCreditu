@@ -340,7 +340,7 @@ describe('CRUD Players', ()=>{
       expect(response.statusCode).toBe(400) 
       expect(response.body.message).toEqual('un user_id es requerido')
     })
-    // errro 400 si no se pasa user_id
+    
 
   })
 })
