@@ -34,6 +34,12 @@ jobs:
   test:
     needs: [lint]
     runs-on: ubuntu-18.04
+    env:
+      DB_NAME_LOCAL : ${{secrets.DB_NAME_LOCAL}}
+      DB_USERNAME_LOCAL : ${{secrets.DB_USERNAME_LOCAL}}
+      DB_PASSWORD_LOCAL : ${{secrets.DB_PASSWORD_LOCAL}}
+      DB_HOST_LOCAL : ${{secrets.DB_HOST_LOCAL}}
+      DB_PORT_LOCAL : ${{secrets.DB_PORT_LOCAL}}
     steps:
       - uses: actions/checkout@v2
         with:
