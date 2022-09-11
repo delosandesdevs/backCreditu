@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const router = Router()
-const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer, filterByStatus, checkNickname} = require('../controllers/functionPlayers')
+const {getAllPlayers, createPlayer, deletePlayer, getPlayerById, modifyPlayer, chargePlayers, searchPlayer, filterByStatus, checkNickname, bringPlayerByNickname} = require('../controllers/functionPlayers')
 
 
 router.get('/chargeDb', async (req, res) => {
@@ -92,9 +92,13 @@ router.put('/players/:id', async (req, res) => {
   const {id} = req.params
   const { nickname, avatar, score, user_id } = req.body
   try {
-    const nicknameFound = await checkNickname(nickname)
-    if(nicknameFound) return res.status(400).json({message: 'El nickname ya existe'})
-    if(!user_id) return res.status(400).json({message: 'un user_id es requerido'})
+    const bringPlayer = await bringPlayerByNickname(nickname)        
+    if(bringPlayer.userId !== user_id){
+      const nicknameFound = await checkNickname(nickname)
+      if(nicknameFound) return res.status(400).json({message: 'El nickname ya existe'})
+      if(!user_id) return res.status(400).json({message: 'un user_id es requerido'})
+    }
+
     res.status(200).json(await modifyPlayer(id, nickname, avatar, score, user_id))      
   } catch (error) {
     res.status(401).json({
