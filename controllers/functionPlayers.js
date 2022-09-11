@@ -66,6 +66,9 @@ const deletePlayer = async (playerId, user_id)=> {
 
 const modifyPlayer = async (id, nickname, avatar, score, user_id) => {
   const user = await User.findByPk(user_id)
+  if(score > 10000){
+    score = 10000
+  }
   if(user){
     if(user.role === 'admin'){
       const update = await Player.update({nickname: nickname, avatar: avatar, score: score, status: score}, { where: { id: id}})
