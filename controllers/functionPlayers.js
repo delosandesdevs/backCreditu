@@ -90,6 +90,12 @@ const checkNickname = async(nickname) => {
   return false
 }
 
+const bringPlayerByNickname = async(nickname) => {
+  const player = await Player.findOne({where: {nickname : {[Op.iLike]: `${nickname}`}}})
+  if(player) return player
+  return false
+}
+
 const searchPlayer = async(nickname, status, page, size, orderby) => {
   //  --- Busqueda por ID --- 
   if (nickname && Number(nickname) == nickname) {
@@ -190,6 +196,7 @@ module.exports = {
   modifyPlayer, 
   chargePlayers, 
   searchPlayer, 
-  checkNickname
+  checkNickname,
+  bringPlayerByNickname
 }
     
