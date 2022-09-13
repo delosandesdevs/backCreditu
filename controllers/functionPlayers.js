@@ -32,7 +32,6 @@ const getAllPlayers = async (page, size, orderby)=> {
 
 const createPlayer = async (nickname, avatar, score, user_id)=> {
   const user = await User.findByPk(user_id)
-  console.log('CREANDO PLAYER', nickname, avatar, score, user_id)
   if(user){
     if(!user.hasPlayer){
       const [newPlayer, created] = await Player.findOrCreate({
