@@ -5,7 +5,7 @@ const {Op} = require('../db/db')
 const { modelPlayer, orderAscDesc } = require('./helpers/helpers')
 
 const chargePlayers = async () => {
-  let i = 1;
+  let i = 1
   players.forEach(p => createPlayerDB(p.nickname+'-'+i++, p.avatar, p.score) )
 }
 
@@ -32,6 +32,12 @@ const getAllPlayers = async (page, size, orderby)=> {
 
 const createPlayer = async (nickname, avatar, score, user_id)=> {
   const user = await User.findByPk(user_id)
+  if(score > 10000){
+    score = 10000
+  }else if(score < 0){
+    score = 0
+  }
+
   if(user){
     if(!user.hasPlayer){
       const [newPlayer, created] = await Player.findOrCreate({
@@ -69,6 +75,8 @@ const modifyPlayer = async (id, nickname, avatar, score, user_id) => {
   const user = await User.findByPk(user_id)
   if(score > 10000){
     score = 10000
+  }else if(score < 0){
+    score = 0
   }
   if(user){
     if(user.role === 'admin'){
@@ -91,7 +99,7 @@ const checkNickname = async(nickname) => {
   return false
 }
 
-const checkNickname2 = async(id) => {
+const checkNickname2 = async() => {
   const players = await Player.findAll()
   return players
 }

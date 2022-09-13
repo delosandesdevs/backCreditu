@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const router = Router()
 const {checkNickname2, getAllPlayers, createPlayer, deletePlayer, modifyPlayer, chargePlayers, searchPlayer, checkNickname } = require('../controllers/functionPlayers')
-const User = require('../models/User')
+
 
 
 
@@ -93,6 +93,7 @@ router.delete('/players/', async (req, res) => {
 router.put('/players/:id', async (req, res) => {
   const {id} = req.params
   const { nickname, avatar, score, user_id } = req.body
+  if(!user_id) return res.status(400).json({message: 'un user_id es requerido'})
   try {
     const players = await checkNickname2()
     const filtered = players.filter(p => parseInt(p.dataValues.id) !== parseInt(id))
