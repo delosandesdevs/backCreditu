@@ -32,6 +32,12 @@ const getAllPlayers = async (page, size, orderby)=> {
 
 const createPlayer = async (nickname, avatar, score, user_id)=> {
   const user = await User.findByPk(user_id)
+  if(score > 10000){
+    score = 10000
+  }else if(score < 0){
+    score = 0
+  }
+
   if(user){
     if(!user.hasPlayer){
       const [newPlayer, created] = await Player.findOrCreate({
@@ -69,6 +75,8 @@ const modifyPlayer = async (id, nickname, avatar, score, user_id) => {
   const user = await User.findByPk(user_id)
   if(score > 10000){
     score = 10000
+  }else if(score < 0){
+    score = 0
   }
   if(user){
     if(user.role === 'admin'){
