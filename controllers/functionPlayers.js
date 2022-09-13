@@ -5,7 +5,7 @@ const {Op} = require('../db/db')
 const { modelPlayer, orderAscDesc } = require('./helpers/helpers')
 
 const chargePlayers = async () => {
-  let i = 1;
+  let i = 1
   players.forEach(p => createPlayerDB(p.nickname+'-'+i++, p.avatar, p.score) )
 }
 
@@ -99,7 +99,7 @@ const checkNickname = async(nickname) => {
   return false
 }
 
-const checkNickname2 = async(id) => {
+const checkNickname2 = async() => {
   const players = await Player.findAll()
   return players
 }

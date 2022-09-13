@@ -1,7 +1,7 @@
 const { Router } = require('express')
 const router = Router()
 const {checkNickname2, getAllPlayers, createPlayer, deletePlayer, modifyPlayer, chargePlayers, searchPlayer, checkNickname } = require('../controllers/functionPlayers')
-const User = require('../models/User')
+
 
 
 
