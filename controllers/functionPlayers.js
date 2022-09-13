@@ -5,8 +5,10 @@ const {Op} = require('../db/db')
 const { modelPlayer, orderAscDesc } = require('./helpers/helpers')
 
 const chargePlayers = async () => {
-  players.forEach(p => createPlayerDB(p.nickname, p.avatar, p.score) )
+  let i = 1;
+  players.forEach(p => createPlayerDB(p.nickname+'-'+i++, p.avatar, p.score) )
 }
+
 // function db
 const createPlayerDB = async (nickname, avatar, score) => {
   const newPlayer = await Player.create({nickname: nickname, avatar: avatar, score: score, status: score})
@@ -30,6 +32,7 @@ const getAllPlayers = async (page, size, orderby)=> {
 
 const createPlayer = async (nickname, avatar, score, user_id)=> {
   const user = await User.findByPk(user_id)
+  console.log('CREANDO PLAYER', nickname, avatar, score, user_id)
   if(user){
     if(!user.hasPlayer){
       const [newPlayer, created] = await Player.findOrCreate({
@@ -41,14 +44,13 @@ const createPlayer = async (nickname, avatar, score, user_id)=> {
           status: score
         }
       })
-      if(created){
+      if(created){        
         user.setPlayer(newPlayer)
         await User.update({hasPlayer: true}, { where: { id: user_id}})
         return newPlayer
       }else{
         return 'El nickname ya existe'
-      }
-            
+      }            
     }else{
       return 'El usuario ya tiene un player'
     }
@@ -90,10 +92,9 @@ const checkNickname = async(nickname) => {
   return false
 }
 
-const bringPlayerByNickname = async(nickname) => {
-  const player = await Player.findOne({where: {nickname : {[Op.iLike]: `${nickname}`}}})
-  if(player) return player
-  return false
+const checkNickname2 = async(id) => {
+  const players = await Player.findAll()
+  return players
 }
 
 const searchPlayer = async(nickname, status, page, size, orderby) => {
@@ -196,7 +197,7 @@ module.exports = {
   modifyPlayer, 
   chargePlayers, 
   searchPlayer, 
-  checkNickname,
-  bringPlayerByNickname
+  checkNickname,  
+  checkNickname2
 }
     
