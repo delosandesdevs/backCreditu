@@ -6,24 +6,37 @@ const Player  = require('../models/Player')
 const User = require('../models/User')
 
 const api = supertest(app)
-
-const randomScore = Math.floor(Math.random() * Math.floor(10001)) 
   
 const initialPlayers = [
   {
     nickname: 'playerOne',
-    avatar: 'https://drive.google.com/file/d/1V5Duu01gsI0sDWPn4gP4ezY2YtP_Pd7e/view',
-    score: randomScore
+    avatar: 'img1.png',
+    score: 9050,
+    status: 9050
   },
   {
     nickname: 'playerTwo',
-    avatar: 'https://drive.google.com/file/d/1V5Duu01gsI0sDWPn4gP4ezY2YtP_Pd7e/view',
-    score: randomScore
+    avatar: 'img2.png',
+    score: 5004,
+    status: 5004
   },
   {
     nickname: 'playerThree',
-    avatar: 'https://drive.google.com/file/d/1V5Duu01gsI0sDWPn4gP4ezY2YtP_Pd7e/view',
-    score: randomScore
+    avatar: 'img3.png',
+    score: 421,
+    status: 421
+  },
+  {
+    nickname: 'playerFour',
+    avatar: 'img4.png',
+    score: 325,
+    status: 325
+  },
+  {
+    nickname: 'playerFive',
+    avatar: 'img5.png',
+    score: 21,
+    status: 21
   }
 ]
 
@@ -38,7 +51,7 @@ describe('CRUD Players', ()=>{
    
   describe('Model Player', ()=>{
     test('Must have a prop id, nickname, avatar, score, status', async() => {
-      const response = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, status: 100})
+      const response = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 100, status: 100})
       const newPlayer = response.dataValues
       expect(newPlayer.nickname).toBeDefined()
       expect(newPlayer.avatar).toBeDefined()
@@ -48,20 +61,20 @@ describe('CRUD Players', ()=>{
     })
 
     test('status must be "oro" if score is >= 9000', async() => {
-      const response = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, status: 9500})
+      const response = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9500, status: 9500})
       const newPlayer = response.dataValues
       expect(newPlayer.status).toEqual('oro')
     })
 
     test('status must be "plata" if score is between 5000 and 8999', async() => {
-      const response = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, status: 6000})
+      const response = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 6000, status: 6000})
       const newPlayer = response.dataValues
       expect(newPlayer.status).toEqual('plata')
     })
 
     test('a player must have a nickname', async () => {
       try {
-        await Player.create({avatar: 'image.png', score: 56, status: 6000})
+        await Player.create({avatar: 'image.png', score: 6000, status: 6000})
       } catch (error) {
         expect(error.message).toBeDefined()
       }
@@ -75,7 +88,7 @@ describe('CRUD Players', ()=>{
       }
     }) 
 
-    test('a player must have a avatar', async () => {
+    test('a player must have an avatar', async () => {
       try {
         await Player.create({nickname: 'florGesell', score: 6000, status: 6000})
       } catch (error) {
@@ -94,7 +107,7 @@ describe('CRUD Players', ()=>{
     })
       
     test('should respond an object with the total of players', async () => {
-      initialPlayers.forEach(async (p) => await Player.create({nickname: p.nickname, avatar: p.avatar, score: p.score})) 
+      await Player.bulkCreate(initialPlayers)
       const response = await api.get('/players')
       expect(response.body).toHaveProperty('total', initialPlayers.length)
       expect(response.body).toHaveProperty('players')
@@ -102,43 +115,31 @@ describe('CRUD Players', ()=>{
     })
 
     test('must have a player with "playerOne" nickname', async () => {
-      initialPlayers.forEach(async (p) => await Player.create({nickname: p.nickname, avatar: p.avatar, score: p.score})) 
+      await Player.bulkCreate(initialPlayers) 
       const response = await api.get('/players')
       const nicknames = response.body.players.map(p => p.nickname)
       expect(nicknames).toContain('playerOne')
     })
 
     test('if orderby=asc should return a limit of players for page, in order ASC by score', async () => {
-      await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56})
-      await Player.create({nickname: 'ramiRama', avatar: 'image.png', score: 500})
-      await Player.create({nickname: 'gianCat', avatar: 'image.png', score: 421})
-      await Player.create({nickname: 'juaniJuano', avatar: 'image.png', score: 325})
-      await Player.create({nickname: 'rodriRo', avatar: 'image.png', score: 21})
+      await Player.bulkCreate(initialPlayers)
       const response = await api.get('/players?page=0&size=2&orderby=asc')
-      expect(response.body.players[0].nickname).toBe('rodriRo')
-      expect(response.body.players[1].nickname).toBe('florGesell')
+      expect(response.body.players[0].nickname).toBe('playerFive')
+      expect(response.body.players[1].nickname).toBe('playerFour')
     })
 
     test('if orderBy=desc should return a limit of players for page, in order DESC by score', async () => {
-      await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56})
-      await Player.create({nickname: 'ramiRama', avatar: 'image.png', score: 500})
-      await Player.create({nickname: 'gianCat', avatar: 'image.png', score: 421})
-      await Player.create({nickname: 'juaniJuano', avatar: 'image.png', score: 325})
-      await Player.create({nickname: 'rodriRo', avatar: 'image.png', score: 21})
+      await Player.bulkCreate(initialPlayers)
       const response = await api.get('/players?page=0&size=2&orderby=desc')
-      expect(response.body.players[0].nickname).toBe('ramiRama')
-      expect(response.body.players[1].nickname).toBe('gianCat')
+      expect(response.body.players[0].nickname).toBe('playerOne')
+      expect(response.body.players[1].nickname).toBe('playerTwo')
     })
 
     test('if there is not queries, must return a list of players order descending by score' , async () => {
-      await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56})
-      await Player.create({nickname: 'ramiRama', avatar: 'image.png', score: 500})
-      await Player.create({nickname: 'gianCat', avatar: 'image.png', score: 421})
-      await Player.create({nickname: 'juaniJuano', avatar: 'image.png', score: 325})
-      await Player.create({nickname: 'rodriRo', avatar: 'image.png', score: 21})
+      await Player.bulkCreate(initialPlayers)
       const response = await api.get('/players')
-      expect(response.body.players[0].nickname).toBe('ramiRama')
-      expect(response.body.players[1].nickname).toBe('gianCat')
+      expect(response.body.players[0].nickname).toBe('playerOne')
+      expect(response.body.players[1].nickname).toBe('playerTwo')
     })
 
     
@@ -147,49 +148,84 @@ describe('CRUD Players', ()=>{
   //nickname, status
   describe('GET /searchplayer', () => {
 
-    test('should return a status 200 and return an array whith the players found by nickname AND status', async () => {
+    const searchPlayers = [
+      {
+        nickname: 'florGesell', 
+        avatar: 'image.png', 
+        score: 9005, 
+        status: 9005
+      },
+      {
+        nickname: 'florCreditu', 
+        avatar: 'image.png', 
+        score: 9845, 
+        status: 9845
+      },
+      {
+        nickname: 'ramiRama', 
+        avatar: 'image.png', 
+        score: 9500, 
+        status: 9500
+      },
+      {
+        nickname: 'florencia', 
+        avatar: 'image.png', 
+        score: 264, 
+        status: 264
+      }
+    ]
+
+    test('should respond with a 200 status code', async () => {
       await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
-      await Player.create({nickname: 'florCreditu', avatar: 'image.png', score: 9845, status: 9845})
-      await Player.create({nickname: 'ramiRama', avatar: 'image.png', score: 9500, status: 9500})
-      await Player.create({nickname: 'florencia', avatar: 'image.png', score: 264, status: 264})
+      await api.get('/searchplayer?nickname=florGesell')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+    })
+
+    test('should return a status 400 if the nickname AND status is not given', async () => {
+      const response = await api.get('/searchplayer')
+      expect(response.statusCode).toEqual(400)
+    })
+
+    test('should return an array whith the players found by nickname(parcial) AND status', async () => {
+      await Player.bulkCreate(searchPlayers)
       const response = await api.get('/searchplayer?nickname=flo&status=oro')
-      expect(response.statusCode).toEqual(200)
-      expect(response.headers['content-type']).toMatch(/application\/json/)
       expect(response.body.players).toHaveLength(2)
       const nicknames = response.body.players.map(p => p.nickname)
       expect(nicknames).toContain('florCreditu', 'florGesell')
       expect(nicknames).not.toContain('florencia')
     })
 
-    test('should return an array whith the players found only by nickname ', async () => {
-      await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
-      await Player.create({nickname: 'florCreditu', avatar: 'image.png', score: 9845, status: 9845})
-      await Player.create({nickname: 'ramiRama', avatar: 'image.png', score: 9500, status: 9500})
-      await Player.create({nickname: 'florencia', avatar: 'image.png', score: 264, status: 264})
+    test('should return an array whith the players found only by nickname(parcial)', async () => {
+      await Player.bulkCreate(searchPlayers)
       const response = await api.get('/searchplayer?nickname=flo')
       expect(response.body.players).toHaveLength(3)
       const nicknames = response.body.players.map(p => p.nickname)
       expect(nicknames).toContain('florCreditu', 'florGesell', 'florencia')
     })
 
-    test('should return a status 400 if the nickname AND status is not given', async () => {
-      await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
-      const response = await api.get('/searchplayer')
-      expect(response.statusCode).toEqual(400)
-    })
 
     test('should found a player by id', async () => {
       const player1 = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
       await Player.create({nickname: 'florCreditu', avatar: 'image.png', score: 9845, status: 9845})
-      const response = await api.get(`/searchplayer?nickname=${player1.dataValues.id}&status=oro`)
+      const response = await api.get(`/searchplayer?nickname=${player1.dataValues.id}`)
       expect(response.body.players[0].id).toEqual(player1.dataValues.id)
       expect(response.body.players[0].nickname).toEqual('florGesell')
       expect(response.body.players).toHaveLength(1)
     })
 
+    test('should return an array whith the players filter by status if nickname is not specified', async () => {
+      await Player.bulkCreate(searchPlayers)
+      const response = await api.get('/searchplayer?status=oro')
+      expect(response.body.players).toHaveLength(3)
+      const nicknames = response.body.players.map(p => p.nickname)
+      expect(nicknames).toContain('florCreditu', 'florGesell', 'ramiRama')
+      expect(nicknames).not.toContain('florencia')
+    })
+
     test('should return a message if the player is not foud by ID', async () => {
       await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
-      const response = await api.get('/searchplayer?nickname=5')
+      const response = await api.get('/searchplayer?nickname=8')
       expect(response.body).toContain('No se encuentra ningun player con el Id indicado')
     })
 
@@ -210,21 +246,24 @@ describe('CRUD Players', ()=>{
   
   
   describe('POST /players', () => {
-  
-    const randomScore = Math.floor(Math.random() * Math.floor(10001)) 
-  
+
     const newPlayer = {
       nickname: 'florGesell',
-      avatar: 'https://drive.google.com/file/d/1V5Duu01gsI0sDWPn4gP4ezY2YtP_Pd7e/view',
-      score: randomScore,
+      avatar: 'image1.png',
+      score: 5481,
       user_id: 1
     }
-  
-    test('a valid player can be created', async () => {
+
+    test('should respond with a 201 status code', async () => {
       await User.create({name: 'florencia', email: 'florencia@gmail.com'})
       await api.post('/players').send(newPlayer) 
-        .expect(200)
+        .expect(201)
         .expect('Content-Type', /application\/json/)
+    })
+  
+    test('Only a register user can create a valid user', async () => {
+      await User.create({name: 'florencia', email: 'florencia@gmail.com'})
+      await api.post('/players').send(newPlayer) 
       const response = await api.get('/players')
       const nicknames = response.body.players.map(p => p.nickname)
       expect(nicknames).toContain(newPlayer.nickname)
@@ -232,14 +271,28 @@ describe('CRUD Players', ()=>{
       expect(response.body.players[0]).toHaveProperty('ranking', 1)
     })
 
+    test('should return a status 400 if the nickname AND status is not given', async () => {
+      const response = await api.get('/searchplayer')
+      expect(response.statusCode).toEqual(400)
+    })
+
+    test('cant\'t create a player with a nickname that already exists', async() => {
+      await User.create({name: 'florencia', email: 'florencia@gmail.com'})
+      await Player.bulkCreate(initialPlayers)
+      const response = await api.post('/players').send({nickname: 'playerOne', avatar: 'img1.png', user_id: 1}) 
+      expect(response.statusCode).toEqual(400)
+      expect(response.body.message).toContain('El nickname ya existe')
+    })
 
     test('a player without a nickname can\'t be created', async () => {
-      const response = await api.post('/players').send({avatar:'imagen.png', score: 32}) 
+      await User.create({name: 'florencia', email: 'florencia@gmail.com'})
+      const response = await api.post('/players').send({avatar:'imagen.png', score: 32, user_id: 1}) 
       expect(response.statusCode).toBe(400) 
     })
 
     test('a player without an avatar can\'t be created', async () => {
-      const response = await api.post('/players').send({nickname: 'ramiRama', score: 54}) 
+      await User.create({name: 'florencia', email: 'florencia@gmail.com'})
+      const response = await api.post('/players').send({nickname: 'ramiRama', score: 54, user_id: 1}) 
       expect(response.statusCode).toBe(400) 
     })
 

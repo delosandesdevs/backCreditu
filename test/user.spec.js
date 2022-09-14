@@ -5,7 +5,7 @@ const { sequelize } = require('../db/db')
 const api = supertest(app)
 const User = require('../models/User')
 
-
+//testing
 const newUsers = [
   {name : 'rama', email : 'amar@example.com'},
   {name : 'florchu', email : 'uhcrolf@example.com'},

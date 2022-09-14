@@ -60,11 +60,12 @@ router.get('/checkNickname/:nickname', async (req, res) => {
 
 router.post('/players', async (req, res) =>{
   const {nickname, avatar, score, user_id} = req.body
+  if(!user_id) return res.status(400).json({message: 'Debe enviar un user_id'})
+  if(!nickname || !avatar) return res.status(400).json('El player debe tener un nickname y avatar')
   try {
     const nicknameFound = await checkNickname(nickname)
     if(nicknameFound) return res.status(400).json({message: 'El nickname ya existe'})
-    if(!nickname || !avatar) return res.status(400).json('El player debe tener un nickname y avatar')
-    res.status(200).json(await createPlayer(nickname, avatar, score, user_id))  
+    res.status(201).json(await createPlayer(nickname, avatar, score, user_id))  
   } catch (error) {
     res.status(401).json({
       name : error.message,
