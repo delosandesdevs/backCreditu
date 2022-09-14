@@ -1,22 +1,17 @@
-const express = require('express');
-const cors = require("cors")
+if(process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
+
+ 
+const {app} = require('./app')
 const { sequelize } = require('./db/db')
-const app = express()
-const test = require('./routes/test')
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
-app.use(cors())
-let port = 8080
 
-app.get('/prueba', async (req, res)=>{
-    res.send('hola')
-})
-app.use('/', test)
+const {PORT} = process.env
 
-
-app.listen(port, () => {
-    console.log('Server run on Port =>  ' + port)
-    sequelize.sync({ alter: true })
+app.listen(PORT, () => {
+  console.log('Server run on Port =>  ' + PORT)
+  sequelize.sync({ alter: true })
 })
 
 
