@@ -34,27 +34,19 @@ const createPlayer = async (nickname, avatar, score, user_id)=> {
   const user = await User.findByPk(user_id)
   if(score > 10000){
     score = 10000
-  }else if(score < 0){
+  }else if(score < 0 || !score){
     score = 0
   }
 
   if(user){
     if(!user.hasPlayer){
-      const [newPlayer, created] = await Player.findOrCreate({
-        where: {nickname},
-        defaults: {
-          nickname,
-          avatar,
-          score,
-          status: score
-        }
-      })
-      if(created){        
+      const newPlayer = await Player.create({ nickname, avatar, score, status: score })
+      if(newPlayer){        
         user.setPlayer(newPlayer)
         await User.update({hasPlayer: true}, { where: { id: user_id}})
         return newPlayer
       }else{
-        return 'El nickname ya existe'
+        return 'No se pudo crear el player'
       }            
     }else{
       return 'El usuario ya tiene un player'
