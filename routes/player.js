@@ -1,26 +1,24 @@
 const { Router } = require('express')
 const router = Router()
-const {checkNickname2, getAllPlayers, createPlayer, deletePlayer, modifyPlayer, chargePlayers, searchPlayer, checkNickname } = require('../controllers/functionPlayers')
+const { getAllPlayers, createPlayer, deletePlayer, modifyPlayer, loadDb, searchPlayer, checkNickname } = require('../controllers/functionPlayers')
+const Player = require('../models/Player')
 
 
-
-
-router.get('/chargeDb', async (req, res) => {
+router.get('/loadDb', async (req, res) => {
   try {
-    await chargePlayers()
+    await loadDb()
     res.send('se cargaron correctamente')
   } catch (error) {
-    res.status(401).json(error.message)
+    res.status(500).json(error.message)
   }
 })
 
 router.get('/players', async (req, res) => {
-  let { page = 0, size = 15, orderby} = req.query
+  let { page = 0, size = 15, orderby = 'desc'} = req.query
   try {
-    orderby = orderby !== 'asc' && orderby !== 'desc' ? 'desc' : orderby
     res.status(200).json(await getAllPlayers(page, size, orderby))      
   } catch (error) {
-    res.status(401).json({
+    res.status(500).json({
       name : error.name,
       msg : error.message
     })
@@ -28,13 +26,12 @@ router.get('/players', async (req, res) => {
 })
 
 router.get('/searchplayer', async(req, res) =>{
-  let {nickname, status, page = 0, size = 15, orderby} = req.query
-  orderby = orderby !== 'asc' && orderby !== 'desc' ? 'desc' : orderby
+  let {nickname, status, page = 0, size = 15, orderby = 'desc'} = req.query
   if(!nickname && !status) return res.status(400).json({message: 'Un nickname o status es requerido'})
   try {
     res.status(200).json(await searchPlayer(nickname, status, page, size, orderby))
   } catch (error) {
-    res.status(401).json({
+    res.status(500).json({
       name : error.name,
       msg : error.message
     })
@@ -51,7 +48,7 @@ router.get('/checkNickname/:nickname', async (req, res) => {
       return res.status(400).json('Un nickname es requerido')
     }
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       name : error.name,
       msg : error.message
     })
@@ -67,7 +64,7 @@ router.post('/players', async (req, res) =>{
     if(nicknameFound) return res.status(400).json({message: 'El nickname ya existe'})
     res.status(201).json(await createPlayer(nickname, avatar, score, user_id))  
   } catch (error) {
-    res.status(401).json({
+    res.status(500).json({
       name : error.message,
       msg: error.message
     })
@@ -77,14 +74,9 @@ router.post('/players', async (req, res) =>{
 router.delete('/players/', async (req, res) => {
   const {playerId, user_id} = req.body
   try {
-    const deletedPlayer = await deletePlayer(playerId, user_id) 
-    if(deletedPlayer === 1){
-      return res.status(200).json('El player fue eliminado correctamente')    
-    }else{
-      return res.status(400).json('el player no existe')
-    }     
+      return res.status(201).json(await deletePlayer(playerId, user_id))    
   } catch (error) {
-    res.status(401).json({
+    res.status(500).json({
       name : error.name,
       msg : error.message
     })
@@ -96,16 +88,16 @@ router.put('/players/:id', async (req, res) => {
   const { nickname, avatar, score, user_id } = req.body
   if(!user_id) return res.status(400).json({message: 'un user_id es requerido'})
   try {
-    const players = await checkNickname2()
-    const filtered = players.filter(p => parseInt(p.dataValues.id) !== parseInt(id))
-    const isIn = filtered.find(p => p.dataValues.nickname === nickname)
+    const players = await Player.findAll()
+    // verifico que en los players que NO pertenecen al usuario no se repita el nickname
+    const filtered = players.filter(p => parseInt(p.id) !== parseInt(id))
+    const nameFound = filtered.find(p => p.dataValues.nickname === nickname)
 
-    if(!isIn)
-      return res.status(200).json(await modifyPlayer(id, nickname, avatar, score, user_id)) 
-      
+    if(!nameFound) return res.status(201).json(await modifyPlayer(id, nickname, avatar, score, user_id)) 
+
     return res.status(400).json({message: 'El nickname ya existe'})    
   } catch (error) {
-    res.status(401).json({
+    res.status(500).json({
       name : error.name,
       msg : error.message
     })
