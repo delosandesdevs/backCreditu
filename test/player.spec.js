@@ -145,7 +145,6 @@ describe('CRUD Players', ()=>{
     
 
   })
-  //nickname, status
   describe('GET /searchplayer', () => {
 
     const searchPlayers = [
@@ -271,9 +270,20 @@ describe('CRUD Players', ()=>{
       expect(response.body.players[0]).toHaveProperty('ranking', 1)
     })
 
-    test('should return a status 400 if the nickname AND status is not given', async () => {
-      const response = await api.get('/searchplayer')
+    test('should return a status 400 a user_id is not given', async () => {
+      const response = await api.post('/players').send({nickname: 'florGesell', avatar: 'img.png'})
       expect(response.statusCode).toEqual(400)
+      expect(response.body.message).toContain('Debe enviar un user_id')
+    })
+
+    test('a user cant\'t create more than one player', async () => {
+      await User.create({name: 'florencia', email: 'florencia@gmail.com'})
+      await api.post('/players').send(newPlayer) 
+      const response = await api.post('/players').send({nickname: "playerOne", avatar: 'img.png', user_id: 1})
+      expect(response.body).toContain('El usuario ya tiene un player')
+      const allPlayers = await api.get('/players')
+      const nicknames = allPlayers.body.players.map(p => p.nickname)
+      expect(nicknames).not.toContain('playerOne')
     })
 
     test('cant\'t create a player with a nickname that already exists', async() => {
@@ -282,6 +292,21 @@ describe('CRUD Players', ()=>{
       const response = await api.post('/players').send({nickname: 'playerOne', avatar: 'img1.png', user_id: 1}) 
       expect(response.statusCode).toEqual(400)
       expect(response.body.message).toContain('El nickname ya existe')
+    })
+
+    test('the user hasPlayer property must change to true when a player is created', async () => {
+      const userCreated = await User.create({name: 'florencia', email: 'florencia@gmail.com'})
+      expect(userCreated.dataValues.hasPlayer).toBe(false)
+      await api.post('/players').send(newPlayer)
+      const users = await api.get('/user?order=name')
+      expect(users.body[0].hasPlayer).toBe(true)
+    })
+
+
+    test('the player created must be related with the user', async () => {
+      await User.create({name: 'florencia', email: 'florencia@gmail.com'})
+      const response = await api.post('/players').send(newPlayer)
+      expect(response.body.userId).toBe(1)
     })
 
     test('a player without a nickname can\'t be created', async () => {
@@ -301,27 +326,24 @@ describe('CRUD Players', ()=>{
   
   describe('DELETE /players', () => {
   
-    test('should respond with a 200 status code', async () => {
-      const newPlayers = initialPlayers.map(async (p) => await Player.create({nickname: p.nickname, avatar: p.avatar, score: p.score}))
-      const players = await Promise.all(newPlayers)
-      await api.delete('/players/').send({playerId: players[0].dataValues.id})
-        .expect(200)
+    test('should respond with a 201 status code', async () => {
+      await Player.bulkCreate(initialPlayers)
+      await api.delete('/players/').send({playerId: 1})
+        .expect(201)
         .expect('Content-Type', /application\/json/)
     })
      
     test('should delete the player by ID', async () => {
-      const newPlayers = initialPlayers.map(async (p) => await Player.create({nickname: p.nickname, avatar: p.avatar, score: p.score}))
-      const players = await Promise.all(newPlayers)
-      const playerId = players[0].dataValues.id
-      await api.delete('/players').send({playerId:playerId})
+      await Player.bulkCreate(initialPlayers)
+      await api.delete('/players').send({ playerId: 1 })
       const response = await api.get('/players/')
       const ids = response.body.players.map(p => p.id)
-      expect(ids).not.toContain(playerId)
+      expect(ids).not.toContain(1)
     })
 
-    test('should return a status 400 if the player does not exist', async () => {
+    test('should return a message if the player does not exist', async () => {
       const response = await api.delete('/players/').send({playerId: 615}) 
-      expect(response.statusCode).toBe(400)
+      expect(response.body).toBe('el player no existe')
     })
   })
   
@@ -332,94 +354,76 @@ describe('CRUD Players', ()=>{
       avatar: 'newpicture',
       user_id: 1
     }
-
     
-    test('should respond with a 200 status code', async () => {
+    test('should respond with a 201 status code', async () => {
       await User.create({name: 'florencia', email: 'florencia@gmail.com'})
-      const player1 = await Player.create({nickname: 'florGesell', avatar: 'img.jpg', user_id: 1}) 
-      const response = await api.put(`/players/${player1.dataValues.id}`).send(modifyPlayer)
-      expect(response.statusCode).toBe(200) 
+      await Player.create({nickname: 'florGesell', avatar: 'img.jpg', user_id: 1}) 
+      const response = await api.put(`/players/1`).send(modifyPlayer)
+      expect(response.statusCode).toBe(201) 
     })
      
-    test('A "user" might modify only the player name', async () => {
+    test('A "user" can modify his player name', async () => {
       await User.create({name: 'florencia', email: 'florencia@gmail.com'})
-      const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', user_id: 1})
-      await api.put(`/players/${newPlayer.dataValues.id}`).send({nickname: 'ramiRama', user_id: 1})
+      await Player.create({nickname: 'florGesell', avatar: 'image.png', user_id: 1})
+      await api.put(`/players/1`).send(modifyPlayer)
       const response = await api.get('/players').send()
-      expect(response.body.players[0].avatar).toEqual('image.png')
+      expect(response.body.players[0].avatar).toEqual('newpicture')
       expect(response.body.players[0].nickname).toEqual('ramiRama')
     })
 
     test('A "user" might modify only the player avatar', async () => {
       await User.create({name: 'florencia', email: 'florencia@gmail.com'})
-      const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
-      await api.put(`/players/${newPlayer.dataValues.id}`).send({avatar: 'newImage.jpg', user_id: 1})
+      await Player.create({nickname: 'ramiRama', avatar: 'image.png', score: 56, user_id: 1})
+      await api.put(`/players/1`).send(modifyPlayer)
       const response = await api.get('/players').send()
-      expect(response.body.players[0].avatar).toEqual('newImage.jpg')
+      expect(response.body.players[0].avatar).toEqual('newpicture')
       expect(response.body.players[0].score).toBe(56)
-      expect(response.body.players[0].nickname).toEqual('florGesell')
+      expect(response.body.players[0].nickname).toEqual('ramiRama')
     })
 
     test('A "user" can\'t change the score', async () => {
       await User.create({name: 'florencia', email: 'florencia@gmail.com'})
-      const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
-      await api.put(`/players/${newPlayer.dataValues.id}`).send({score: 2000, user_id: 1})
+      await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
+      await api.put(`/players/1`).send({score: 2000, user_id: 1})
       const response = await api.get('/players').send()
       expect(response.body.players[0].score).toBe(56)
     })
   
-    test('Only an "admin" user can change the score', async () => {
+    test('Only an "admin"  can change the score', async () => {
       await User.create({name: 'florencia', email: 'florencia@gmail.com', role: 'admin'})
-      const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
-      await api.put(`/players/${newPlayer.dataValues.id}`).send({score: 4000, user_id: 1})
-      const response = await api.get(`/searchplayer?nickname=${newPlayer.dataValues.id}`).send()
+      await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
+      await api.put(`/players/1`).send({score: 4000, user_id: 1})
+      const response = await api.get(`/players`).send()
       expect(response.body.players[0].avatar).toEqual('image.png')
       expect(response.body.players[0].score).toBe(4000)
       expect(response.body.players[0].nickname).toEqual('florGesell')
+    }) 
+
+    test('A "user" can\'t change the score', async () => {
+      await User.create({name: 'florencia', email: 'florencia@gmail.com'})
+      await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
+      await api.put(`/players/1`).send({score: 2000, user_id: 1})
+      const response = await api.get('/players').send()
+      expect(response.body.players[0].score).toBe(56)
     })
 
-    test('a user cant change the score', async () => {
+    test('can\'t change the nickname if already exists', async () => {
       await User.create({name: 'florencia', email: 'florencia@gmail.com'})
-      const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
-      const response = await api.put(`/players/${newPlayer.dataValues.id}`).send({score: 4000, user_id: 1})
-      expect(response.body).toContain('El player no pudo ser modificado')
+      await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
+      await Player.bulkCreate(initialPlayers)
+      const response = await api.put(`/players/1`).send({nickname: 'playerOne', user_id: 1})
+      expect(response.status).toBe(400)
+      expect(response.body.message).toBe('El nickname ya existe')
     })
-    
 
     test('should return a status 400 if user_id is not pass', async () => {
-      await User.create({name: 'florencia', email: 'florencia@gmail.com', role: 'admin'})
-      const newPlayer = await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 56, user_id: 1})
-      const response = await api.put(`/players/${newPlayer.dataValues.id}`).send({score: 4000})
+      const response = await api.put(`/players/1`).send({score: 4000})
       expect(response.statusCode).toBe(400) 
       expect(response.body.message).toEqual('un user_id es requerido')
     })
     
 
   })
-})
-
-describe('CATCH errors', () => {
-
-  // test('must catch an error on /players', async()=>{
-  //   try {
-  //     const response = await api.get('/players/')
-  //     response.end()
-  //   } catch (error) {
-  //     console.log(error.message)
-  //     expect(error.message).toBeDefined()
-  //   }
-  // })
-
-  // test('must catch an error on /searchplayer', async()=>{
-  //   try {
-  //     await sequelize.close()
-  //     await api.get('/searchplayer')
-  //   } catch (error) {
-  //     console.log(error.message)
-  //     expect(error.message).toBeDefined()
-  //   }
-  // })
-
 })
 
 
