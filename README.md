@@ -74,27 +74,30 @@ Una vez definidas las variables de entorno, al correr el comando npm run dev, el
 <h3>Creación de base de datos PostgreSQL</h3>
 En caso de aun no contar con una base de datos, sigue los siguientes pasos para crear una:
 
+<div align="center">
+
 - Descargar la ultima versión estable de Postgres de su web oficial [Postgres](https://www.postgresql.org/download/)
 
-![Postgres](/assets/postgres1.png)
+<img src="./assets/postgres1.png" width="400px" />
+
 
 - Ejecutamos el instalador, este incluye las herramientas de lineas de comando, la interfaz visual pgAdmin y el servidor de Postgres
 
-![Postgres](/assets/postgres2.png)
+<img src="./assets/postgres2.png" width="400px" />
 
 - Asignar la contraseña para el superusuario de la base de datos de PostgreSQL
 
-![Postgres](/assets/postgres3.png)
+<img src="./assets/postgres3.png" width="400px" />
 
 - En la próxima ventana dejaremos el puerto por defecto para PostgreSQL: 5432
 
 - Una vez completa la instalación podemos seleccionar ingresar a través de la interfaz grafica o de la consola SQL Shell
 
-![Postgres](/assets/postgres5.png)
+<img src="./assets/postgres5.png" width="400px" />
 
 - En SQL Shell completamos los requerimientos, por defecto podemos dar 'enter' en todos los campos MENOS en la contraseña, donde colocaremos la indicada previamente en el instalador 
 
-![Postgres](/assets/postgres4.png)
+<img src="./assets/postgres4.png" width="400px" />
 
 - En este momento ya estamos conectados al servidor de Postgres. Podemos crear una base de datos con el comando:
 ```
@@ -104,7 +107,7 @@ En caso de aun no contar con una base de datos, sigue los siguientes pasos para 
 ```
    \l 
 ```
-![Postgres](/assets/postgres6.png)
+<img src="./assets/postgres6.png" width="400px" />
 
 - El paso final seria reemplazar las credenciales en el archivo .env 
 ```
@@ -114,7 +117,7 @@ En caso de aun no contar con una base de datos, sigue los siguientes pasos para 
     DB_PASSWORD= contraseña que hayas definido 
     DB_PORT= 5432
 ```
-
+</div>
 <br>
 
 
