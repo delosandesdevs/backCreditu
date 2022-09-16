@@ -99,7 +99,7 @@ En caso de aun no contar con una base de datos, sigue los siguientes pasos para 
 
 - En este momento ya estamos conectados al servidor de Postgres. Podemos crear una base de datos con el comando:
 ```
-   CREATE DATABASE new_database;
+   CREATE DATABASE prueba;
 ``` 
 - Veremos un mensaje de confirmación de que la base ha sido creada con éxito. A continuación podemos desplegar un listado de las bases de datos ejecutando el comando: 
 ```
