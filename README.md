@@ -1,3 +1,6 @@
+[![Deployment Pipeline](https://github.com/delosandesdevs/backCreditu/actions/workflows/main.yml/badge.svg?branch=develop)](https://github.com/delosandesdevs/backCreditu/actions/workflows/main.yml)
+<br>
+<br>
 ![FreeForest](/assets/home_logo.png)
 
 <br>
