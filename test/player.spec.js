@@ -225,19 +225,19 @@ describe('CRUD Players', ()=>{
     test('should return a message if the player is not foud by ID', async () => {
       await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
       const response = await api.get('/searchplayer?nickname=8')
-      expect(response.body).toContain('No se encuentra ningun player con el Id indicado')
+      expect(response.body).toContain('No se encuentra el player')
     })
 
     test('should return a message if the player is not foud by nickname', async () => {
       await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
       const response = await api.get('/searchplayer?nickname=ramiro')
-      expect(response.body).toContain('No se encuentra ningun player con el nickname indicado')
+      expect(response.body).toContain('No se encuentra el player')
     })
 
     test('should return a message if the player is not foud by nickaname AND status', async () => {
       await Player.create({nickname: 'florGesell', avatar: 'image.png', score: 9005, status: 9005})
       const response = await api.get('/searchplayer?nickname=florGesell&status=bronce')
-      expect(response.body).toContain('No se encuentra ninguna coincidencia con ese nickname y status')
+      expect(response.body).toContain('No se encuentra el player')
     })
 
   })
@@ -343,7 +343,7 @@ describe('CRUD Players', ()=>{
 
     test('should return a message if the player does not exist', async () => {
       const response = await api.delete('/players/').send({playerId: 615}) 
-      expect(response.body).toBe('el player no existe')
+      expect(response.body).toBe('Hubo un error con el player')
     })
   })
   

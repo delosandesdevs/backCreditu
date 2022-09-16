@@ -2,7 +2,8 @@ const Player = require('../models/Player')
 const User = require('../models/User')
 const players = require('../playersDb.json')
 const {Op} = require('../db/db')
-const { modelPlayer, orderAscDesc, searchById, searchByNameStatus, searchByName, filterByStatus } = require('./helpers/helpers')
+const { modelPlayer, orderAscDesc, searchById, searchByNameStatus, searchByName, filterByStatus, validScore } = require('./helpers/helpers')
+const {ERROR_PLAYER, PLAYER_EDITED, USER_PLAYER, NO_USER, PLAYER_DELETED} = require('./helpers/constants')
 
 const loadDb = async () => {
   let i = 1
@@ -31,12 +32,7 @@ const getAllPlayers = async (page, size, orderby)=> {
 
 const createPlayer = async (nickname, avatar, score, user_id)=> {
   const user = await User.findByPk(user_id)
-  if(score > 10000){
-    score = 10000
-  }else if(score < 0 || !score){
-    score = 0
-  }
-
+  score = validScore(score)
   if(user){
     if(!user.hasPlayer){
       const newPlayer = await Player.create({ nickname, avatar, score, status: score })
@@ -45,13 +41,13 @@ const createPlayer = async (nickname, avatar, score, user_id)=> {
         await User.update({hasPlayer: true}, { where: { id: user_id}})
         return newPlayer
       }else{
-        return 'No se pudo crear el player'
+        return ERROR_PLAYER
       }            
     }else{
-      return 'El usuario ya tiene un player'
+      return USER_PLAYER
     }
   }
-  return 'El usuario no existe'
+  return NO_USER
 }
 
 const deletePlayer = async (playerId, user_id)=> {
@@ -60,31 +56,27 @@ const deletePlayer = async (playerId, user_id)=> {
   }
   const deletedPlayer = await Player.destroy({where: {id: playerId}})
   if(deletedPlayer === 1){
-    return 'El player fue eliminado correctamente'  
+    return PLAYER_DELETED  
   }else{
-    return 'el player no existe'
+    return ERROR_PLAYER
   }    
 }
 
 const modifyPlayer = async (id, nickname, avatar, score, user_id) => {
   const user = await User.findByPk(user_id)
-  if(score > 10000){
-    score = 10000
-  }else if(score < 0){
-    score = 0
-  }
+  score = validScore(score)
   if(user){
     if(user.role === 'admin'){
       const update = await Player.update({nickname: nickname, avatar: avatar, score: score, status: score}, { where: { id: Number(id)}})
-      if(update[0] === 1) return 'Player modificado correctamente'
-      return 'El player no pudo ser modificado'
+      if(update[0] === 1) return PLAYER_EDITED 
+      return ERROR_PLAYER
     }else if (user.role === 'user'){
       const update = await Player.update({nickname: nickname, avatar: avatar}, { where: { id: Number(id)}})
-      if(update[0] === 1) return 'Player modificado correctamente'
-      return 'El player no pudo ser modificado'
+      if(update[0] === 1) return PLAYER_EDITED 
+      return ERROR_PLAYER
     }
   }else{
-    return 'El usuario no existe'
+    return NO_USER
   }
 }
 
