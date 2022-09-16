@@ -74,8 +74,6 @@ Una vez definidas las variables de entorno, al correr el comando npm run dev, el
 <h3>Creación de base de datos PostgreSQL</h3>
 En caso de aun no contar con una base de datos, sigue los siguientes pasos para crear una:
 
-<div align="center">
-
 - Descargar la ultima versión estable de Postgres de su web oficial [Postgres](https://www.postgresql.org/download/)
 
 <img src="./assets/postgres1.png" width="400px" />
@@ -117,7 +115,6 @@ En caso de aun no contar con una base de datos, sigue los siguientes pasos para 
     DB_PASSWORD= contraseña que hayas definido 
     DB_PORT= 5432
 ```
-</div>
 <br>
 
 
