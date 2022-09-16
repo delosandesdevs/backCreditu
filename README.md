@@ -52,22 +52,22 @@ Antes de correr el comando de inicio es necesario crear un archivo .env en la ra
 
 En su despliegue local utiliza las siguientes variables de entorno
 ```
-DB_NAME_LOCAL= nombre que tendra la base de datos que hayas creado
+DB_NAME= nombre que tendra la base de datos que hayas creado
 ```
 ```
-DB_USERNAME_LOCAL = nombre de usuario de la base de datos, generalmente es 'postgres' pero eso dependera de como configures tu bd
+DB_USERNAME= nombre de usuario de la base de datos, generalmente es 'postgres' pero eso dependera de como configures tu bd
 ```
 ```
-DB_HOST_LOCAL= endpoint que te asigne la base de datos, generalmente cuando es local es 'localhost'
+DB_HOST= endpoint que te asigne la base de datos, generalmente cuando es local es 'localhost'
 ```
 ```
-DB_PASSWORD_LOCAL= contraseña que hayas definido para acceder a tu bd
+DB_PASSWORD= contraseña que hayas definido para acceder a tu bd
 ```
 ```
-DB_PORT_LOCAL= puerto de conexion de la base de datos, por ejemplo en PostgreSQL es 5432
+DB_PORT= puerto de conexion de la base de datos, por ejemplo en PostgreSQL es 5432
 ```
 ```
-DB_PORT= puerto local, generalmente es 8080
+PORT= puerto local, generalmente es 8080
 ```
 Una vez definidas las variables de entorno, al correr el comando npm run dev, el server detectara que estas en un ambiente de desarrollo y tomara de manera automatica las variables previamente definidas
 
