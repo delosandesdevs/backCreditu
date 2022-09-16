@@ -1,5 +1,6 @@
 const User = require('../models/User')
 const Player = require('../models/Player')
+const {USER_MODIFIED, USER_DELETED} = require('./helpers/constants')
 
 const getUser = async(order) =>{
   if(order === 'name'){
@@ -64,14 +65,14 @@ const modifyUser = async(name, role, id) =>{
       where : {id : id}
     }
   )
-  return 'el usuario fue modificado correctamente'
+  return USER_MODIFIED
 }
 
 const deleteUser = async(id) =>{
   const userFound = await User.findByPk(id)
-  if(!userFound) return 'El usuario no existe'
+  if(!userFound) return USER_MODIFIED
   await User.destroy({where : {id : id}})
-  return `El usuario ${userFound.dataValues.name} fue eliminado correctamente`
+  return USER_DELETED
 }
 
 
