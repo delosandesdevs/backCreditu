@@ -1,6 +1,6 @@
 const Player = require('../../models/Player')
 const {Op} = require('../../db/db')
-
+const {NO_PLAYER, INVALID_STATUS} = require('./constants')
 
 const modelPlayer = async (player) => {
   const allPlayers = await Player.findAll({
@@ -32,7 +32,7 @@ const searchById = async (id) => {
         players: [await modelPlayer(player)]
       }
     }else {
-      return 'No se encuentra ningun player con el Id indicado'
+      return NO_PLAYER
     }
 }
 
@@ -61,7 +61,7 @@ const searchByNameStatus = async (nickname, status, page, size, orderby) => {
     const players = await Promise.all(playersFound)
     return orderAscDesc(orderby, count, players)
   }else{
-    return 'No se encuentra ninguna coincidencia con ese nickname y status'
+    return NO_PLAYER
   }
 }
 
@@ -82,7 +82,7 @@ const searchByName = async (nickname, page, size, orderby) => {
     const players = await Promise.all(playersFound)
     return orderAscDesc(orderby, count, players)
   }else{
-    return 'No se encuentra ningun player con el nickname indicado'
+    return NO_PLAYER
   }
 }
 
@@ -103,8 +103,17 @@ const filterByStatus = async (status, page, size, orderby) => {
         return orderAscDesc(orderby, count, players)
       }
    }else{
-    return 'status no valido'
+    return INVALID_STATUS
    }
+}
+
+const validScore = (score) => {
+  if(score > 10000){
+   return score = 10000
+  }else if(score < 0 || !score){
+   return score = 0
+  }
+  return score
 }
 
 module.exports = {
@@ -113,5 +122,6 @@ module.exports = {
   searchById,
   searchByNameStatus,
   searchByName,
-  filterByStatus
+  filterByStatus,
+  validScore
 }
