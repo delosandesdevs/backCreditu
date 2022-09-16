@@ -9,5 +9,7 @@ USER_PLAYER: 'El usuario ya tiene un player',
 NO_USER: 'El usuario no existe',
 PLAYER_DELETED: 'El player fue eliminado correctamente',
 NO_PLAYER: 'No se encuentra el player',
-INVALID_STATUS: 'Status invalido'
+INVALID_STATUS: 'Status invalido',
+USER_MODIFIED : 'el usuario fue modificado correctamente',
+USER_DELETED : 'El usuario fue eliminado correctamente'
 }
