@@ -96,25 +96,14 @@ const checkNickname = async(nickname) => {
 
 
 const searchPlayer = async(nickname, status, page, size, orderby) => {
-
-  //  --- Busqueda por ID --- 
   if (nickname && Number(nickname) == nickname) {
-
    return await searchById(nickname)
-    
-    // --- Busqueda por nombre o status --- 
   }else if(nickname && Number(nickname) !== NaN) {  // eslint-disable-line
-    
-      //---- busqueda combinada entre name y status(oro, bronce, plata) ---
       if( status && status !== 'todos' ){
         return await searchByNameStatus(nickname, status, page, size, orderby)
-          
-        //  ---- busqueda en toda la base por nombre ----
       }else if (status === 'todos' || !status ){
         return await searchByName(nickname, page, size, orderby)
       }
-
-    /// --- all players filter by status ----
   }else if (!nickname && status){
     if(status === 'todos') return await getAllPlayers(page, size, orderby)
     return await filterByStatus(status, page, size, orderby)
@@ -129,7 +118,6 @@ module.exports = {
   modifyPlayer, 
   loadDb, 
   searchPlayer, 
-  checkNickname,  
- // checkNickname2
+  checkNickname
 }
     

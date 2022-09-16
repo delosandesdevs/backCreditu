@@ -5,7 +5,6 @@ const { sequelize } = require('../db/db')
 const api = supertest(app)
 const User = require('../models/User')
 
-//testing
 const newUsers = [
   {name : 'rama', email : 'amar@example.com'},
   {name : 'florchu', email : 'uhcrolf@example.com'},
@@ -26,7 +25,6 @@ describe('CRUD /user',  ()=>{
     test('should respond with a 200 status code', async()=>{
       const response = await api.get('/user?order=name').send()
       expect(response.statusCode).toBe(200)
-      // expect(response.headers['content-type']).toMatch(/application\/json/)
     })
 
     test('should return an array of objects', async()=>{
@@ -171,9 +169,6 @@ describe('CRUD /user',  ()=>{
       await User.bulkCreate(newUsers)
       const response = await api.delete('/user').send()
       expect(response.status).toBe(400)
-      // expect(response.body.message).toEqual('the user does not exist')
-
-
     })
 
     test('validate is database is not connected', async()=>{

@@ -89,7 +89,6 @@ router.put('/players/:id', async (req, res) => {
   if(!user_id) return res.status(400).json({message: 'un user_id es requerido'})
   try {
     const players = await Player.findAll()
-    // verifico que en los players que NO pertenecen al usuario no se repita el nickname
     const filtered = players.filter(p => parseInt(p.id) !== parseInt(id))
     const nameFound = filtered.find(p => p.dataValues.nickname === nickname)
 

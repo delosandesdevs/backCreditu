@@ -51,14 +51,24 @@ Antes de correr el comando de inicio es necesario crear un archivo .env en la ra
 <h2>Parametrización de las variables de entorno 📄 </h2>
 
 En su despliegue local utiliza las siguientes variables de entorno
-
-- DB_NAME_LOCAL  👉 nombre que tendra la base de datos que hayas creado
-- DB_USERNAME_LOCAL 👉 nombre de usuario de la base de datos, generalmente es 'postgres' pero eso dependera de como configures tu bd
-- DB_HOST_LOCAL     👉 endpoint que te asigne la base de datos, generalmente cuando es local es 'localhost'
-- DB_PASSWORD_LOCAL 👉 contraseña que hayas definido para acceder a tu bd
-- DB_PORT_LOCAL     👉 puerto de conexion de la base de datos, por ejemplo en PostgreSQL es 5432
-- DB_PORT 👉 puerto local, generalmente es 8080
-
+```
+DB_NAME_LOCAL= nombre que tendra la base de datos que hayas creado
+```
+```
+DB_USERNAME_LOCAL = nombre de usuario de la base de datos, generalmente es 'postgres' pero eso dependera de como configures tu bd
+```
+```
+DB_HOST_LOCAL= endpoint que te asigne la base de datos, generalmente cuando es local es 'localhost'
+```
+```
+DB_PASSWORD_LOCAL= contraseña que hayas definido para acceder a tu bd
+```
+```
+DB_PORT_LOCAL= puerto de conexion de la base de datos, por ejemplo en PostgreSQL es 5432
+```
+```
+DB_PORT= puerto local, generalmente es 8080
+```
 Una vez definidas las variables de entorno, al correr el comando npm run dev, el server detectara que estas en un ambiente de desarrollo y tomara de manera automatica las variables previamente definidas
 
 Para realizar el despliegue local solo necesitas abrir una terminal en la raiz de la carpeta donde guardaste el repositorio en tu computador y ejecutar el comando.
@@ -93,4 +103,136 @@ También está disponible el comando
 Esto ejecuta la metrica Code Coverage, que permite conocer la calidad y cuanto de tu codigo está siendo testeado, ayudandote a mejorar y lograr la mayor cobertura posible!
 <br>
 <br>
-<h1> Despliegue productivo </h1>
+
+<h1>Stack de desarrollo 🛠</h1>
+
+Las tecnologías utilizadas para el desarrollo fueron:
+
+- **Express**
+- **Sequelize**
+- **PostgreSQL**
+- **NodeJs 16.14.2**
+- **Npm 8.5**
+- **Jest**
+- **Supertest**
+
+
+<br>
+<br>
+<h1> Imagen Docker 🐙 </h1>
+Las imagenes Docker de este proyecto estan pensadas para correr en simultaneo tanto back como front.
+Para poder manipular nuestras imagenes Docker como principal requisito es tener instalado en tu ordenador Docker, el cual en el siguiente enlace puedes obtener el paso a paso para la instalación. 
+
+https://www.docker.com/products/docker-desktop/ 
+
+Luego ingresa en la terminal de tu ordenador e ingresa el siguiente comando para poder descargar las imagenes.
+
+Front
+```
+docker pull gianfrancogobbi/freeforest_front:v1
+```
+
+Back
+```
+docker pull gianfrancogobbi/freeforest_back:v1
+```
+
+Cuando termine el proceso de descarga ya puedes correr tus imagenes con los siguientes comandos
+
+Front
+```
+docker run -it -p 3000:3000 gianfrancogobbi/freeforest_front:v1
+```
+
+Back
+```
+docker run -it -p 8080:8080 gianfrancogobbi/freeforest_back:v1
+```
+
+Ya con todos estos pasos, solamente queda ingresar a Free Forest a navegar en el siguiente enlace.
+
+http://localhost:3000/
+
+<br>
+<br>
+<h1> Despliegue productivo ⚙️</h1>
+
+El proyecto cuenta con un flujo de despliegue a través de Github Actions donde se realizan unos checkeos tanto en el pull request como en el push, ejecutando **Eslint** siendo este un paso dependiente para que los **tests funcionales** se lancen. 
+
+Esta aplicacion web fue desplegada utilizando los siguientes servicios de AWS:
+  - **Elastic Beanstalk** : Este servicio de Amazon integra la maquina virtual y la conexión a la base de datos. Maneja el balanceo de carga, auto scaling y monitoreo.
+  - **RDS** : Base de datos relacional PostgreSQL.
+  - **CodeBuild** : Servicio de integración continua completamente administrado que compila el código. 
+  - **CodePipeline** : Es un servicio que permite una canalización de trabajo continuo para desplegar una aplicación.
+  - **Route53** : Servicio confiable para enrutar a los usuarios a las aplicaciones de Internet. Se utilzó para hostear una URL con un certificado SSL.
+  - **AWS Amplify** : Se utilizó para hostear la aplicación del frontend, permitiendo configurar una canalización de trabajo continuo incluyendo su propia compilación y deploy. 
+
+<br>
+<h1>Equipo de desarrollo 🌄</h1>
+
+<div style="display:flex; align-items:center; width: 100%">
+<div >
+
+- [Florencia Taburelli](<https://github.com/orgs/delosandesdevs/people/FlorenciaTaburelli>)
+
+</div>
+
+
+<img src='./assets/flor.png' alt="drawing" width="100"/>
+
+
+<div >
+
+- [Juano Cataldo](<https://github.com/orgs/delosandesdevs/people/juanocataldo>)
+
+</div>
+
+
+<img src='./assets/juano.png' alt="drawing" width="100"/>
+
+
+<div >
+
+- [Ramiro Grisales](<https://github.com/orgs/delosandesdevs/people/orimarselasirg>)
+
+</div>
+
+
+<img src='./assets/rami.png' alt="drawing" width="100"/>
+
+<div >
+
+- [Rodrigo Pérez](<https://github.com/orgs/delosandesdevs/people/rodrigo0109>)
+
+</div>
+
+
+
+<img src='./assets/rodri.png' alt="drawing" width="100"/>
+
+
+
+<div >
+
+- [Gianfranco Gobbi](<https://github.com/GianfrancoGobbi>)
+
+</div>
+
+
+<img src='./assets/gian.png' alt="drawing" width="100"/>
+
+
+
+
+</div>
+
+<br><br>
+
+
+
+<div align="center">
+<img src='./assets/Aspose.Words.ea102fbd-e677-478a-991b-66b51ee3534b.008.png' alt="drawing" width="100"/>
+
+**De Los Andes development**
+</div>
+
