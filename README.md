@@ -52,28 +52,75 @@ Antes de correr el comando de inicio es necesario crear un archivo .env en la ra
 
 En su despliegue local utiliza las siguientes variables de entorno
 ```
-DB_NAME_LOCAL= nombre que tendra la base de datos que hayas creado
+DB_NAME= nombre que tendra la base de datos que hayas creado
 ```
 ```
-DB_USERNAME_LOCAL = nombre de usuario de la base de datos, generalmente es 'postgres' pero eso dependera de como configures tu bd
+DB_USERNAME= nombre de usuario de la base de datos, generalmente es 'postgres' pero eso dependera de como configures tu bd
 ```
 ```
-DB_HOST_LOCAL= endpoint que te asigne la base de datos, generalmente cuando es local es 'localhost'
+DB_HOST= endpoint que te asigne la base de datos, generalmente cuando es local es 'localhost'
 ```
 ```
-DB_PASSWORD_LOCAL= contraseña que hayas definido para acceder a tu bd
+DB_PASSWORD= contraseña que hayas definido para acceder a tu bd
 ```
 ```
-DB_PORT_LOCAL= puerto de conexion de la base de datos, por ejemplo en PostgreSQL es 5432
+DB_PORT= puerto de conexion de la base de datos, por ejemplo en PostgreSQL es 5432
 ```
 ```
-DB_PORT= puerto local, generalmente es 8080
+PORT= puerto local, generalmente es 8080
 ```
 Una vez definidas las variables de entorno, al correr el comando npm run dev, el server detectara que estas en un ambiente de desarrollo y tomara de manera automatica las variables previamente definidas
 
-Para realizar el despliegue local solo necesitas abrir una terminal en la raiz de la carpeta donde guardaste el repositorio en tu computador y ejecutar el comando.
+<h3>Creación de base de datos PostgreSQL</h3>
+En caso de aun no contar con una base de datos, sigue los siguientes pasos para crear una:
+
+- Descargar la ultima versión estable de Postgres de su web oficial [Postgres](https://www.postgresql.org/download/)
+
+![Postgres](/assets/postgres1.png)
+
+- Ejecutamos el instalador, este incluye las herramientas de lineas de comando, la interfaz visual pgAdmin y el servidor de Postgres
+
+![Postgres](/assets/postgres2.png)
+
+- Asignar la contraseña para el superusuario de la base de datos de PostgreSQL
+
+![Postgres](/assets/postgres3.png)
+
+- En la próxima ventana dejaremos el puerto por defecto para PostgreSQL: 5432
+
+- Una vez completa la instalación podemos seleccionar ingresar a través de la interfaz grafica o de la consola SQL Shell
+
+![Postgres](/assets/postgres5.png)
+
+- En SQL Shell completamos los requerimientos, por defecto podemos dar 'enter' en todos los campos MENOS en la contraseña, donde colocaremos la indicada previamente en el instalador 
+
+![Postgres](/assets/postgres4.png)
+
+- En este momento ya estamos conectados al servidor de Postgres. Podemos crear una base de datos con el comando:
+```
+   CREATE DATABASE new_database;
+``` 
+- Veremos un mensaje de confirmación de que la base ha sido creada con éxito. A continuación podemos desplegar un listado de las bases de datos ejecutando el comando: 
+```
+   \l 
+```
+![Postgres](/assets/postgres6.png)
+
+- El paso final seria reemplazar las credenciales en el archivo .env 
+```
+    DB_NAME= prueba
+    DB_USERNAME= postgres
+    DB_HOST= localhost
+    DB_PASSWORD= contraseña que hayas definido 
+    DB_PORT= 5432
+```
+
+<br>
+
 
 <h2>Ejecución  del proyecto 💻</h2>
+
+Para realizar el despliegue local solo necesitas abrir una terminal en la raiz de la carpeta donde guardaste el repositorio en tu computador y ejecutar el comando.
 
 ```sh
   npm run dev
