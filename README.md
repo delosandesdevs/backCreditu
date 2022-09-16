@@ -217,7 +217,7 @@ Esta aplicacion web fue desplegada utilizando los siguientes servicios de AWS:
 <br>
 <h1>Equipo de desarrollo 🌄</h1>
 
-<div style="display:flex; align-items:center; width: 100%">
+<div style="display:flex; width: 100%">
 <div >
 
 - [Florencia Taburelli](<https://github.com/orgs/delosandesdevs/people/FlorenciaTaburelli>)
