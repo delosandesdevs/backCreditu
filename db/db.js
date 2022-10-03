@@ -4,24 +4,18 @@ const {DB_NAME,
   DB_USERNAME, 
   DB_PASSWORD, 
   DB_HOST, 
-  DB_PORT , 
+  DB_PORT,
+  DATABASE_URL
   } = process.env
 
-const sequelize = new Sequelize({
-  database:  DB_NAME ,
-  username:  DB_USERNAME,
-  password: DB_PASSWORD ,
-  host: DB_HOST,
-  port: DB_PORT,
-  dialect: 'postgres',
-  logging: false,
+
+const sequelize = new Sequelize(DATABASE_URL , {
+  logging: false,   //Loging disabled
   dialectOptions: {
-    logging: false,
-    native: false,
-  },
-  ssl: {
-    require: true, 
-    rejectUnauthorized: false 
+    ssl:{
+      require:true,
+      rejectUnauthorized: false
+    } 
   }
 })
 
